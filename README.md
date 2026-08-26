@@ -51,7 +51,7 @@ Describe the pipeline stages, e.g.:
 - **Atom detection block** — thresholding / peak-finding logic that identifies atom presence at each expected lattice site from the image data
 - **Counting block** — tallies detected atoms and produces the current occupancy grid
 - **Rearrangement algorithm block** — compares current occupancy to the target pattern and computes the move sequence needed to fill it
-- **DAC output stage** — converts the rearrangement move sequence into the analog control waveform(s) sent to the AOD/AOM driving the tweezer rearrangement
+- **DAC output stage** — converts the rearrangement move sequence into the analog control waveform(s) sent to the AOD/AOM driving the tweezer rearrangement [DAC methods - Go to interleaved mode, not dual port](https://www.analog.com/media/en/technical-documentation/data-sheets/AD9763_9765_9767.pdf)
 - **PS/PL interface** — what the ARM core (Zynq PS) handles vs. what runs in FPGA fabric (PL) — e.g. PS for configuration/monitoring, PL for the real-time detection and DAC pipeline
 If there's a top-level state machine (e.g. IDLE → CAPTURE → DETECT → DECIDE → OUTPUT), a state diagram here is worth including.
 
