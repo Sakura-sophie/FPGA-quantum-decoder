@@ -86,3 +86,30 @@ Describe the detection and rearrangement algorithm in more detail here, e.g.:
 - **Counting:** how the total atom count and occupancy grid are represented in hardware (e.g. bit vector, register array)
 - **Rearrangement strategy:** the logic used to decide which atoms move where to fill the target pattern (e.g. row-by-row, column compaction, or a specific published rearrangement algorithm you implemented/adapted)
 - **Timing:** how fast this runs end-to-end (important for atom trapping — rearrangement usually needs to happen within the atom lifetime/trap coherence window)
+
+
+
+
+## Simulation & Testbenches
+ 
+Each module has a corresponding testbench in `testbench/`.
+ 
+**Running with Vivado XSIM:**
+1. Add the testbench and set it as the simulation top.
+2. Run Behavioral Simulation.
+3. Inspect waveforms in the Wave window — check detection thresholds trigger correctly against synthetic image test vectors, and DAC output timing matches expected rearrangement sequence.
+Describe what each key testbench validates, e.g. "`atom_detect_tb.vhd` feeds synthetic image frames with known atom positions and checks the detection block's occupancy output against expected values."
+ 
+## Building & Programming the Red Pitaya
+ 
+1. Run Synthesis → Implementation → Generate Bitstream in Vivado.
+2. Transfer the bitstream to the Red Pitaya (via its web interface, SCP over the network, or SD card boot image depending on your workflow).
+3. Load the FPGA image on boot or via the Red Pitaya's runtime FPGA loading mechanism.
+4. Describe your verification step — e.g. "confirm DAC output waveform on an oscilloscope matches the expected rearrangement pulse pattern for a known test image."
+## Results / Verification
+ 
+Summarize what's been verified: simulation results against known image test vectors, on-hardware detection accuracy, end-to-end latency from image capture to DAC output, and resource utilization (LUTs, FFs, BRAM, DSP slices) on the Zynq-7010 fabric.
+ 
+## Future Work
+ 
+List known limitations or planned improvements (e.g. faster rearrangement algorithm, higher resolution imaging support, closed-loop feedback).
