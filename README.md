@@ -5,8 +5,8 @@ FPGA-based image processing pipeline for real-time detection, counting, and rear
  
 ## Table of Contents
 - [Overview](#overview)
-- [Architecture / Block Design](#architecture--block-design)
 - [Repository Structure](#repository-structure)
+- [Architecture / Block Design](#architecture--block-design)
 - [Requirements](#requirements)
 - [Getting Started](#getting-started)
 - [Constraints](#constraints)
@@ -37,3 +37,52 @@ FPGA-based image processing pipeline for real-time detection, counting, and rear
 ├── .gitignore
 └── README.md
 ```
+## Architecture / Block Design
+ 
+Insert your block diagram here:
+ 
+```
+![Block Diagram](docs/block_diagram.png)
+```
+ 
+Describe the pipeline stages, e.g.:
+ 
+- **Image input interface** — how camera frame data enters the FPGA (via ADC channels directly, via PS-side capture and AXI stream into PL, GigE/CameraLink bridged through the ARM core, etc. — specify your actual interface)
+- **Atom detection block** — thresholding / peak-finding logic that identifies atom presence at each expected lattice site from the image data
+- **Counting block** — tallies detected atoms and produces the current occupancy grid
+- **Rearrangement algorithm block** — compares current occupancy to the target pattern and computes the move sequence needed to fill it
+- **DAC output stage** — converts the rearrangement move sequence into the analog control waveform(s) sent to the AOD/AOM driving the tweezer rearrangement
+- **PS/PL interface** — what the ARM core (Zynq PS) handles vs. what runs in FPGA fabric (PL) — e.g. PS for configuration/monitoring, PL for the real-time detection and DAC pipeline
+If there's a top-level state machine (e.g. IDLE → CAPTURE → DETECT → DECIDE → OUTPUT), a state diagram here is worth including.
+
+
+
+## Getting Started
+ 
+1. Clone the repository:
+```bash
+   git clone https://github.com/<your-username>/<repo-name>.git
+   cd <repo-name>
+```
+2. If building on the Red Pitaya base project, clone/reference it separately and follow their setup instructions for generating the base block design before adding this project's custom IP.
+3. Open the project in Vivado (or recreate it from the provided `.tcl` build script, if included).
+4. Set the top-level VHDL file as the top module.
+5. Run synthesis, implementation, and generate the bitstream.
+## Constraints
+ 
+The `.xdc` file(s) in `constraints/` define the Red Pitaya's fixed pin mapping for:
+ 
+- **ADC input pins** — connects to the onboard 14-bit ADC channels carrying camera/image signal data
+- **DAC output pins** — connects to the onboard 14-bit DAC channels driving the rearrangement control signal
+- **System clock** — the Red Pitaya's onboard clock source and PLL configuration
+- **GPIO / expansion connector pins** — if using the extension header for additional camera or trigger I/O
+Red Pitaya's official repository provides a reference `.xdc` for the STEMlab 125-14 — reuse it as the base rather than remapping pins from scratch, since the ADC/DAC/clock connections are fixed by the board layout
+
+## Algorithm
+ 
+Describe the detection and rearrangement algorithm in more detail here, e.g.:
+ 
+- **Detection:** how a site is classified as occupied/empty from the raw image (thresholding method, filtering, calibration approach)
+- **Counting:** how the total atom count and occupancy grid are represented in hardware (e.g. bit vector, register array)
+- **Rearrangement strategy:** the logic used to decide which atoms move where to fill the target pattern (e.g. row-by-row, column compaction, or a specific published rearrangement algorithm you implemented/adapted)
+- **Timing:** how fast this runs end-to-end (important for atom trapping — rearrangement usually needs to happen within the atom lifetime/trap coherence window)
