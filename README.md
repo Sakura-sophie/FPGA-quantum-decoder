@@ -1,7 +1,7 @@
 # FPGA-quantum-decoder
 # Neutral Atom Array Image Processing (Red Pitaya STEMlab 125-14)
  
-FPGA-based image processing pipeline for real-time detection, counting, and rearrangement of neutral atoms in an optical tweezer array, implemented on a Red Pitaya STEMlab 125-14 (Xilinx Zynq-7010). The system processes camera image data to locate atoms, determines a rearrangement sequence to fill a target grid pattern, and outputs control signals via the onboard DAC to drive the rearrangement hardware (e.g. AOD/AOM). Uses ssh through windows command to communicate wih the board.
+FPGA-based image processing pipeline for real-time detection, counting, and rearrangement of neutral atoms in an optical tweezer array, implemented on a Red Pitaya STEMlab 125-14 (Xilinx Zynq-7010). The system processes camera image data to locate atoms, uses closed-loop feedback to determine a rearrangement sequence to fill a target grid pattern, and outputs control signals via the onboard DAC to drive the rearrangement hardware (e.g. AOD/AOM). Uses ssh terminal to communicate with the board.
  
 ## Table of Contents
 - [Overview](#overview)
@@ -111,7 +111,10 @@ Describe what each key testbench validates, e.g. "`atom_detect_tb.vhd` feeds syn
 Summarize what's been verified: simulation results against known image test vectors, on-hardware detection accuracy, end-to-end latency from image capture to DAC output, and resource utilization (LUTs, FFs, BRAM, DSP slices) on the Zynq-7010 fabric.
  
 ## Future Work
- 
-List known limitations or planned improvements (e.g. faster rearrangement algorithm, higher resolution imaging support, closed-loop feedback).
-More sophisticated rearrangement algorithm. (closed-loop feedback). Or ATLAS algorithm
-Making generics editable on face level rather than within the design code, via text file for example. Few ways of doing this, some more complicated than others. [Generics/parameter examples](https://www.doulos.com/knowhow/fpga/settings-genericsparameters-for-synthesis/)
+
+-Test with real images from a camera using ADC.
+
+-List known limitations or planned improvements (e.g. faster rearrangement algorithm, higher resolution imaging support).
+Could look into faster or more sophisticated rearrangement algorithm. [ATLAS algorithm](https://arxiv.org/html/2511.16303v1)
+
+-Make generics editable on face level rather than within the design vhdl code, via a text file for example. Means we don't have to open vivado every time we make a change. Few ways of doing this, some more complicated than others. [Generics/parameter examples](https://www.doulos.com/knowhow/fpga/settings-genericsparameters-for-synthesis/)
