@@ -8,7 +8,7 @@ entity my_FPGA is
         img_height : integer := 12;
         atom_spacing : integer := 3; -- In pixels. Calibrate and alter this parameter from experiment.
         grid_size : integer :=3; -- 8x8
-        roi_size : integer :=2; -- Region of interest in pixels surrounding atom sites. Will probs want to be greater in experiment. Eg 4x4.
+        roi_size : integer :=2; -- Region of interest in pixels surrounding atom sites. Will probs want to be greater in experiment. Must also be less than atom spacing.
         start_offset_x : integer :=2;
         start_offset_y : integer :=2; -- In pixels. Start of wherever you expect your atoms to fall in. 1st ROI.
         hist_data_l : std_logic_vector(13 downto 0) := "00000001001100"; -- Decimal 76
