@@ -76,7 +76,7 @@ The `.xdc` file(s) in `constraints/` define the Red Pitaya's fixed pin mapping f
 - **DAC output pins** — connects to the onboard 14-bit DAC channels driving the rearrangement control signal
 - **System clock** — the Red Pitaya's onboard clock source and PLL configuration
 - **GPIO / expansion connector pins** — if using the extension header for additional camera or trigger I/O
-Red Pitaya's official repository provides a reference `.xdc` for the STEMlab 125-14 — reuse it as the base rather than remapping pins from scratch, since the ADC/DAC/clock connections are fixed by the board layout
+Red Pitaya's official repository provides a reference `.xdc` for the STEMlab 125-14 — reuse it as the base rather than remapping pins from scratch, since the ADC/DAC/clock connections are fixed by the board layout. To find correct pin mapping, navigate to [Schematics_STEM_125-14_v1.1.pdf](https://redpitaya.readthedocs.io/en/latest/developerGuide/hardware/ORIG_GEN/125-14/top.html#top-125-14).
 
 ## Algorithm
  
