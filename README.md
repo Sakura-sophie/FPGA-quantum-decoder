@@ -113,5 +113,5 @@ Summarize what's been verified: simulation results against known image test vect
 ## Future Work
  
 List known limitations or planned improvements (e.g. faster rearrangement algorithm, higher resolution imaging support, closed-loop feedback).
-More sophisticated rearrangement algorithm. (closed-loop feedback).
+More sophisticated rearrangement algorithm. (closed-loop feedback). Or ATLAS algorithm
 Making generics editable on face level rather than within the design code, via text file for example. Few ways of doing this, some more complicated than others. [Generics/parameter examples](https://www.doulos.com/knowhow/fpga/settings-genericsparameters-for-synthesis/)
