@@ -1,7 +1,7 @@
 # FPGA-quantum-decoder
 # Neutral Atom Array Image Processing (Red Pitaya STEMlab 125-14)
  
-FPGA-based image processing pipeline for real-time detection, counting, and rearrangement of neutral atoms in an optical tweezer array, implemented on a Red Pitaya STEMlab 125-14 (Xilinx Zynq-7010). The system processes camera image data to locate atoms, determines a rearrangement sequence to fill a target grid pattern, and outputs control signals via the onboard DAC to drive the rearrangement hardware (e.g. AOD/AOM).
+FPGA-based image processing pipeline for real-time detection, counting, and rearrangement of neutral atoms in an optical tweezer array, implemented on a Red Pitaya STEMlab 125-14 (Xilinx Zynq-7010). The system processes camera image data to locate atoms, determines a rearrangement sequence to fill a target grid pattern, and outputs control signals via the onboard DAC to drive the rearrangement hardware (e.g. AOD/AOM). Uses ssh through windows command to communicate wih the board.
  
 ## Table of Contents
 - [Overview](#overview)
@@ -113,3 +113,5 @@ Summarize what's been verified: simulation results against known image test vect
 ## Future Work
  
 List known limitations or planned improvements (e.g. faster rearrangement algorithm, higher resolution imaging support, closed-loop feedback).
+More sophisticated rearrangement algorithm. (closed-loop feedback).
+Making generics editable on face level rather than within the design code, via text file for example. Few ways of doing this, some more complicated than others. [Generics/parameter examples](https://www.doulos.com/knowhow/fpga/settings-genericsparameters-for-synthesis/)
