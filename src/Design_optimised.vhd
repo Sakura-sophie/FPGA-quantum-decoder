@@ -164,19 +164,23 @@ begin
         img_data_latched <= (others =>'0');
         img_data_latched_1 <= (others =>'0');
         
-    elsif rising_edge(clock)then
-        --if clk_en ='1' then
-            if frame_rdy = '1' then
-                start_read<='1';
-                img_data_latched <=img_buffer(rd_addr);
-                img_data_latched_1 <=img_data_latched;
-                rd_addr<=rd_addr+1;
-            elsif frame_rdy ='1' and rd_addr = (img_width*img_height - 1) then
-                rd_addr <= 0;
+    elsif rising_edge(clock) then
+        if frame_rdy = '1' then
+            img_data_latched   <= img_buffer(rd_addr);
+            img_data_latched_1 <= img_data_latched;
+            
+            if rd_addr < (img_width * img_height - 1) then
+                start_read <= '1';
+                rd_addr    <= rd_addr + 1;
+            else
+                start_read <= '0';
+                rd_addr    <= 0;
             end if;
+        else
+            start_read <= '0';
         end if;
-    --end if;
-    end process;
+    end if;
+    end process BRAM_read;
    
 
     roi_process : process(count,row)
