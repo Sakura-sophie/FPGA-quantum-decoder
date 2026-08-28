@@ -38,12 +38,8 @@ FPGA-based image processing pipeline for real-time detection, counting, and rear
 └── README.md
 ```
 ## Architecture / Block Design
- 
-Insert your block diagram here:
- 
-```
+  
 ![Block Diagram](docs/Block_design.png)
-```
  
 Describe the pipeline stages, e.g.:
  
