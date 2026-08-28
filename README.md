@@ -79,6 +79,7 @@ If there's a top-level state machine (e.g. IDLE → CAPTURE → DETECT → DECID
 12. back in ssh terminal open python nano test.py
 13. paste test python code and save and exit
 14. run python3 test.py and look for waveform on oscilloscope out of DAC.
+15. [Network Manager](https://redpitaya.readthedocs.io/en/latest/appsFeatures/systemtool/network_manager/networkManager.html).
 
    
 ## Constraints
@@ -120,8 +121,7 @@ Describe what each key testbench validates, e.g. "`atom_detect_tb.vhd` feeds syn
 3. Load the FPGA image on boot or via the Red Pitaya's runtime FPGA loading mechanism.
 4. Describe your verification step — e.g. "confirm DAC output waveform on an oscilloscope matches the expected rearrangement pulse pattern for a known test image."
 
-## Using ssh
-one of many ways to communicate with the board. For alternatives go to [Network Manager](https://redpitaya.readthedocs.io/en/latest/appsFeatures/systemtool/network_manager/networkManager.html).
+ 
 
 
 ## Results / Verification
