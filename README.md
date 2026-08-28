@@ -107,6 +107,7 @@ Describe the detection and rearrangement algorithm in more detail here, e.g.:
 ## Simulation & Testbenches
  
 Each module has a corresponding testbench in `testbench/`.
+simulation often has max timing it can simulate. Scale down slowed clock and output_del to 4 and 10 to see logic clearly in waveforms.
  
 **Running with Vivado XSIM:**
 1. Add the testbench and set it as the simulation top.
