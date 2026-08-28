@@ -70,6 +70,17 @@ If there's a top-level state machine (e.g. IDLE → CAPTURE → DETECT → DECID
 3. Open the project in Vivado (or recreate it from the provided `.tcl` build script, if included).
 4. Set the top-level VHDL file as the top module.
 5. Run synthesis, implementation, and generate the bitstream.
+6. Connect power to the board and switch on. Use ethernet to connect to pc.
+7. Wait roughly 20 s then type rp-xxxxxx.local in web address to verify communication between board and pc.
+8. Once web browser loads, open windows command terminal and type scp C:\path\Design_name_wrapper.bit root@rp-xxxxxx.local:/tmp/
+9. ssh root@rp-xxxxxx.local
+10. cat /tmp/Design_name_wrapper.bit > /dev/xdevcfg
+11. In a separate window, load txt file.
+12. back in ssh terminal open python nano test.py
+13. paste test python code and save and exit
+14. run python3 test.py and look for waveform on oscilloscope out of DAC.
+
+   
 ## Constraints
  
 The `.xdc` file(s) in `constraints/` define the Red Pitaya's fixed pin mapping for:
@@ -108,6 +119,11 @@ Describe what each key testbench validates, e.g. "`atom_detect_tb.vhd` feeds syn
 2. Transfer the bitstream to the Red Pitaya (via its web interface, SCP over the network, or SD card boot image depending on your workflow).
 3. Load the FPGA image on boot or via the Red Pitaya's runtime FPGA loading mechanism.
 4. Describe your verification step — e.g. "confirm DAC output waveform on an oscilloscope matches the expected rearrangement pulse pattern for a known test image."
+
+## Using ssh
+one of many ways to communicate with the board. For alternatives go to [Network Manager](https://redpitaya.readthedocs.io/en/latest/appsFeatures/systemtool/network_manager/networkManager.html).
+
+
 ## Results / Verification
  
 Summarize what's been verified: simulation results against known image test vectors, on-hardware detection accuracy, end-to-end latency from image capture to DAC output, and resource utilization (LUTs, FFs, BRAM, DSP slices) on the Zynq-7010 fabric.
