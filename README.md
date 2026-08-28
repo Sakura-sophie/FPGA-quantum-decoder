@@ -43,9 +43,10 @@ FPGA-based image processing pipeline for real-time detection, counting, and rear
 
 After creating the main vhdl design, named my_FPGA, recreate the block design above. Block designs are useful modules that are good for integrating components without requiring putting together from scratch. In this design, we have integrated the boards internal clock of 125MHz, and a reset signal. Notice the labelling reset_n, n indicates negative, meaning it performs a reset when reset is driven low ( 0 ). Important to be consistent with the design to avoid getting stuck in reset mode. The block design also includes AXI GPIO, which is how we send the simulated image signals. Double click the module and enable dual channel. Set both channels to output only and set the first width to 14 and second to 1. Connect the 14 width port to img_bit_stream, and the other to valid. We will drive these using python in ssh.
 
-After creating, in the sources tab, right click the block design and create HDL wrapper. This converts the block diagrams into actual verilog code that can be understood by Vivado when implementing the design.
+Once built, go to the sources tab and right click the block design and create HDL wrapper. This converts the block diagrams into actual verilog code that can be understood by Vivado when implementing the design.
 To note: After any edits, go to block design and refresh module to make updates. Validate design to check no wiring or hardware errors.
- 
+
+ Disable DDR, make Fixed IO external (Vivado deals with this pin itself), And make Trigger, and all the output ports in my_FPGA external.
 Describe the pipeline stages, e.g.:
  
 - **Image input interface** — how camera frame data enters the FPGA (via ADC channels directly, via PS-side capture and AXI stream into PL, GigE/CameraLink bridged through the ARM core, etc. — specify your actual interface)
