@@ -46,7 +46,9 @@ After creating the main vhdl design, recreate the block design above. Block desi
 Once built, go to the sources tab and right click on the block design and select create HDL wrapper. This converts the block diagrams into actual verilog code that can be understood by Vivado when implementing the design.
 To note: After any edits to design VHDL, go to block design and refresh module to update. Validate design to check no wiring or hardware errors.
 
- Disable DDR, make Fixed IO external (Vivado deals with this pin itself), And make Trigger, and all the output ports in my_FPGA external.
+ In the ZYNQ7 processing module, double click and Disable DDR, then make Fixed IO external (Vivado deals with this pin itself).
+ 
+ Make Trigger, and all the output ports in my_FPGA external.
  
 Describe the pipeline stages, e.g.:
  
