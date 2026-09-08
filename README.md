@@ -1,7 +1,7 @@
 # FPGA-quantum-decoder
 # Neutral Atom Array Image Processing (Red Pitaya STEMlab 125-14)
  
-FPGA-based image processing pipeline for real-time detection, counting, and rearrangement of neutral atoms in an optical tweezer array, implemented on a Red Pitaya STEMlab 125-14 (Xilinx Zynq-7010). The system processes camera image data to locate atoms, uses closed-loop feedback to determine a rearrangement sequence to fill a target grid pattern, and outputs control signals via the onboard DAC to drive the rearrangement hardware (e.g. AOD/AOM). Uses ssh terminal to communicate with the board.
+FPGA-based image processing pipeline for real-time detection, counting, and rearrangement of neutral atoms in an optical tweezer array, implemented on a Red Pitaya STEMlab 125-14 (Xilinx Zynq-7010). The system processes camera image data to locate atoms, uses closed-loop feedback to determine a rearrangement sequence to fill a target grid pattern, and outputs control signals via the onboard DAC to drive the rearrangement hardware (e.g. AOD). Uses ssh terminal to communicate with the board.
  
 ## Table of Contents
 - [Overview](#overview)
@@ -111,11 +111,12 @@ Describe the detection and rearrangement algorithm in more detail here, e.g.:
  
 Simulation often has max timing it can simulate. Scale down slowed clock and output_del to ~ 4 and 10 to see logic clearly in waveforms. screenshots  of what simulation waveforms should look like given in docs file.
  
-Can simulate in Vivado by adding testbench in add sources tab or on platforms such as EDA playground which I prefered.
+Can simulate in Vivado by adding testbench in add sources tab or on platforms such as EDA playground which I found easier and faster to work with. 
+
 1. Add the testbench and set it as the simulation top.
 2. Run Behavioral Simulation.
-3. Inspect waveforms in the Wave window — check detection thresholds trigger correctly, and DAC output matches expected rearrangement sequence for a particular image.
-'my_fpga_tb' produces a clock signal of period x ns and feeds simulated image data into the design from a text file synchronously with the 'valid' pulse at regular intervals (longer than that of the slowed clock).
+3. Inspect waveforms in the Wave window and check detection thresholds trigger correctly, and DAC output matches the expected rearrangement sequence for the specific image being used.  
+'my_fpga_tb' produces a clock signal of period x ns and feeds simulated image data into the design from a text file synchronously with the 'valid' pulse at regular intervals (y ns which is longer than that of the slowed clock).
  
 ## Building & Programming the Red Pitaya
  
