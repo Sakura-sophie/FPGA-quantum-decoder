@@ -109,14 +109,13 @@ Describe the detection and rearrangement algorithm in more detail here, e.g.:
 
 ## Simulation & Testbenches
  
-Each module has a corresponding testbench in `testbench/`.
-simulation often has max timing it can simulate. Scale down slowed clock and output_del to 4 and 10 to see logic clearly in waveforms.
+Simulation often has max timing it can simulate. Scale down slowed clock and output_del to ~ 4 and 10 to see logic clearly in waveforms. screenshots  of what simulation waveforms should look like given in docs file.
  
-**Running with Vivado XSIM:**
+Can simulate in Vivado by adding testbench in add sources tab or on platforms such as EDA playground which I prefered.
 1. Add the testbench and set it as the simulation top.
 2. Run Behavioral Simulation.
-3. Inspect waveforms in the Wave window — check detection thresholds trigger correctly against synthetic image test vectors, and DAC output timing matches expected rearrangement sequence.
-Describe what each key testbench validates, e.g. "`atom_detect_tb.vhd` feeds synthetic image frames with known atom positions and checks the detection block's occupancy output against expected values."
+3. Inspect waveforms in the Wave window — check detection thresholds trigger correctly, and DAC output matches expected rearrangement sequence for a particular image.
+'my_fpga_tb' produces a clock signal of period x ns and feeds simulated image data into the design from a text file synchronously with the 'valid' pulse at regular intervals (longer than that of the slowed clock).
  
 ## Building & Programming the Red Pitaya
  
