@@ -20,7 +20,7 @@ FPGA-based image processing pipeline for real-time detection, counting, and rear
 
 - **Application:** Real-time image processing for neutral atom arrays in quantum computing
 - **Target device:** [Red Pitaya STEMlab 125-14 (Xilinx Zynq-7010, dual-core ARM Cortex-A9 + programmable logic)](https://redpitaya.readthedocs.io/en/latest/developerGuide/hardware/ORIG_GEN/125-14/top.html#top-125-14)
-- **Toolchain:**  [AMD Vivado 2026.1](https://www.xilinx.com/support/download.html) — download the **Self Extracting Web Installer** (~286 MB for Windows, ~394 MB for Linux), not the full offline SFD image (~98 GB). The web installer lets you select only the components you need (WebPACK license, Zynq-7000 device support) and downloads them on demand — no need for the full package.
+- **Toolchain:**  [AMD Vivado 2026.1](https://www.xilinx.com/support/download.html) — download the **Self Extracting Web Installer** (~286 MB for Windows, ~394 MB for Linux), not the full offline SFD image. The web installer lets you select only the components you need (Zynq-7000), no need for the full package.
 - **Language:** VHDL
 - **I/O:** 2x 14-bit ADC input channels (125 MSPS), 2x 14-bit DAC output channels (125 MSPS)
 - **Pipeline:** Camera image in → atom detection/thresholding → counting → grid rearrangement decision → DAC output to rearrangement optics.
@@ -41,12 +41,13 @@ FPGA-based image processing pipeline for real-time detection, counting, and rear
   
 ![Block Diagram](docs/Block_design.png)
 
-After creating the main vhdl design, named my_FPGA, recreate the block design above. Block designs are useful modules that are good for integrating components without requiring putting together from scratch. In this design, we have integrated the boards internal clock of 125MHz, and a reset signal. Notice the labelling reset_n, n indicates negative, meaning it performs a reset when reset is driven low ( 0 ). Important to be consistent with the design to avoid getting stuck in reset mode. The block design also includes AXI GPIO, which is how we send the simulated image signals. Double click the module and enable dual channel. Set both channels to output only and set the first width to 14 and second to 1. Connect the 14 width port to img_bit_stream, and the other to valid. We will drive these using python in ssh.
+After creating the main vhdl design, recreate the block design above. Block designs are useful modules that are good for integrating components without requiring putting together from scratch. In this design, we have integrated the boards internal clock of 125MHz, and a reset signal. Notice the labelling reset_n, n indicates negative, meaning it performs a reset when reset is driven low ( 0 ). Important to be consistent with the design to avoid getting stuck in reset mode. The block design also includes AXI GPIO, which is how we send the simulated image signals during testing. Double click the AXI GPIO module and enable dual channel. Set both channels to output only and set the first width to 14 and second to 1. Connect the 14 width port to img_bit_stream, and the other to valid. We will drive these using python in ssh.
 
-Once built, go to the sources tab and right click the block design and create HDL wrapper. This converts the block diagrams into actual verilog code that can be understood by Vivado when implementing the design.
-To note: After any edits, go to block design and refresh module to make updates. Validate design to check no wiring or hardware errors.
+Once built, go to the sources tab and right click on the block design and select create HDL wrapper. This converts the block diagrams into actual verilog code that can be understood by Vivado when implementing the design.
+To note: After any edits to design VHDL, go to block design and refresh module to update. Validate design to check no wiring or hardware errors.
 
  Disable DDR, make Fixed IO external (Vivado deals with this pin itself), And make Trigger, and all the output ports in my_FPGA external.
+ 
 Describe the pipeline stages, e.g.:
  
 - **Image input interface** — how camera frame data enters the FPGA (via ADC channels directly, via PS-side capture and AXI stream into PL, GigE/CameraLink bridged through the ARM core, etc. — specify your actual interface)
