@@ -27,11 +27,11 @@ FPGA-based image processing pipeline for real-time detection, counting, and rear
  
 ```
 .
-├── src/            # VHDL source files (RTL)
-├── testbench/      # VHDL testbenches
-├── constraints/    # Pin and timing constraints (.xdc)
-├── docs/           # Block diagrams, waveforms, screenshots
-├── sim/            # Simulation scripts / waveform configs
+├── src/            # VHDL source files 
+├── testbench/      # VHDL testbench for simulation
+├── constraints/    # Pin constraints (.xdc)
+├── docs/           # Block diagram, waveforms, screenshots
+├── sim/            # Simulation scripts (python streaming data over AXI GPIO)
 └── README.md
 ```
 ## Architecture / Block Design
