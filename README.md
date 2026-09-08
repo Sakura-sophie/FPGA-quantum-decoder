@@ -7,7 +7,6 @@ FPGA-based image processing pipeline for real-time detection, counting, and rear
 - [Overview](#overview)
 - [Repository Structure](#repository-structure)
 - [Architecture / Block Design](#architecture--block-design)
-- [Requirements](#requirements)
 - [Getting Started](#getting-started)
 - [Constraints](#constraints)
 - [Algorithm](#algorithm)
@@ -15,7 +14,6 @@ FPGA-based image processing pipeline for real-time detection, counting, and rear
 - [Building & Programming the Red Pitaya](#building--programming-the-red-pitaya)
 - [Results / Verification](#results--verification)
 - [Future Work](#future-work)
-- [License](#license)
 ## Overview
 
 - **Application:** Real-time image processing for neutral atom arrays in quantum computing
