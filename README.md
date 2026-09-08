@@ -136,7 +136,6 @@ Summarize what's been verified: simulation results against known image test vect
 
 -Test with real images from a camera using ADC.
 
--List known limitations or planned improvements (e.g. faster rearrangement algorithm, higher resolution imaging support).
-Could look into faster or more sophisticated rearrangement algorithm. [ATLAS algorithm](https://arxiv.org/html/2511.16303v1)
+-Could look into faster or more sophisticated rearrangement algorithm. [ATLAS algorithm](https://arxiv.org/html/2511.16303v1)
 
 -Make generics editable on face level rather than within the design vhdl code, via a text file for example. Means we don't have to open vivado every time we make a change. Few ways of doing this, some more complicated than others. [Generics/parameter examples](https://www.doulos.com/knowhow/fpga/settings-genericsparameters-for-synthesis/)
