@@ -11,7 +11,6 @@ end entity tb_my_FPGA;
 architecture sim of tb_my_FPGA is
 
     constant CLK_PERIOD  : time := 10 ns;       -- 100 MHz system clk
-    constant PIXEL_RATE  : time := 10 us;       -- Time interval between pixels
     constant IMG_WIDTH : integer := 12;
     constant IMG_HEIGHT  : integer := 12;
 
@@ -74,7 +73,7 @@ begin
         wait;
     end process;
 
-    -- Stimulus Process: Drives data at fixed PIXEL_RATE intervals
+    -- Stimulus Process: Drives data at fixed intervals
     stim : process
         file  img_file : text open read_mode is "myfile.txt";
         variable line_v : line;
@@ -92,15 +91,12 @@ begin
             wait for 20 ns;
             img_bit_stream <= data_v;
             valid  <= '1';
-            
-            --wait until rising_edge(clk);
+
             wait for 20 ns;
             valid <= '0';
 
             pixel_n := pixel_n + 1;
 
-            -- Wait the remaining duration of the fixed interval before sending next pixel
-            --wait for PIXEL_RATE - (2 * CLK_PERIOD);
         end loop;
         
         wait for 1 us;
