@@ -57,6 +57,9 @@ Describe the pipeline stages, e.g.:
 - **PS/PL interface** — what the ARM core (Zynq PS) handles vs. what runs in FPGA fabric (PL) — e.g. PS for configuration/monitoring, PL for the real-time detection and DAC pipeline
 If there's a top-level state machine (e.g. IDLE → CAPTURE → DETECT → DECIDE → OUTPUT), a state diagram here is worth including.
 
+Valid phase, ensures read each pixel only once.
+image_data_latched_1. 1 cycle delay so that start read doesn't occur too early.
+
 
 
 ## Getting Started
