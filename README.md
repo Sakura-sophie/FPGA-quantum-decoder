@@ -116,7 +116,7 @@ Can simulate in Vivado by adding testbench in add sources tab or on platforms su
 1. Add the testbench and set it as the simulation top.
 2. Run Behavioral Simulation.
 3. Inspect waveforms in the Wave window and check detection thresholds trigger correctly, and DAC output matches the expected rearrangement sequence for the specific image being used.  
-'my_fpga_tb' produces a clock signal of period x ns and feeds simulated image data into the design from a text file synchronously with the 'valid' pulse at regular intervals (y ns which is longer than that of the slowed clock).
+'tb.vhd' produces a clock signal of period 100 ns and feeds simulated image data into the design from a text file synchronously with the 'valid' pulse at regular intervals (y ns which is longer than that of the slowed clock).
  
 ## Building & Programming the Red Pitaya
  
