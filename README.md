@@ -32,7 +32,6 @@ FPGA-based image processing pipeline for real-time detection, counting, and rear
 ├── constraints/    # Pin and timing constraints (.xdc)
 ├── docs/           # Block diagrams, waveforms, screenshots
 ├── sim/            # Simulation scripts / waveform configs
-├── .gitignore
 └── README.md
 ```
 ## Architecture / Block Design
