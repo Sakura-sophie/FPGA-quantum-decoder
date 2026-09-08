@@ -116,8 +116,8 @@ Can simulate in Vivado by adding testbench in add sources tab or on platforms su
 1. Add the testbench and set it as the simulation top.
 2. Run Behavioral Simulation.
 3. Inspect waveforms in the Wave window and check detection thresholds trigger correctly, and DAC output matches the expected rearrangement sequence for the specific image being used.  
-'tb.vhd' produces a clock signal of period 100 ns and feeds simulated image data into the design from a text file synchronously with the 'valid' pulse at regular intervals (y ns which is longer than that of the slowed clock).
- 
+tb.vhd produces a clock signal of period 10 ns and feeds simulated image data into the design from a text file synchronously with the 'valid' pulse at regular intervals (40 ns). After it has completed sreaming the data from the text file, it produces a trigger signal that enables the readout of the DAC output.
+The signal mapping is done in the standard way using uut and work.entity, method can be found at ...
 ## Building & Programming the Red Pitaya
  
 1. Run Synthesis → Implementation → Generate Bitstream in Vivado.
