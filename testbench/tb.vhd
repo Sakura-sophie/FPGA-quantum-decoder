@@ -12,17 +12,17 @@ architecture sim of tb_my_FPGA is
 
     constant CLK_PERIOD  : time := 10 ns;       -- 100 MHz system clk
     constant PIXEL_RATE  : time := 10 us;       -- Time interval between pixels
-    constant IMG_WIDTH   : integer := 12;
+    constant IMG_WIDTH : integer := 12;
     constant IMG_HEIGHT  : integer := 12;
 
-    signal clk             : std_logic := '0';
-    signal reset           : std_logic := '0';  
+    signal clk : std_logic := '0';
+    signal reset : std_logic := '0';  
     signal img_bit_stream : std_logic_vector(13 downto 0) := (others => '0');
-    signal valid           : std_logic := '0';
-    signal readout         : std_logic;
-    signal Trigger         : std_logic :='0';
+    signal valid : std_logic := '0';
+    signal readout: std_logic;
+    signal Trigger: std_logic :='0';
     signal Q_1, Q_2, Q_3, Q_4 : std_logic;
-    signal dac_dda         : signed(13 downto 0);
+    signal dac_dda : signed(13 downto 0);
     signal IQWRT, IQSEL, IQCLK, IQRESET : std_logic;
 
     signal sim_done : boolean := false;
@@ -35,21 +35,21 @@ begin
             img_height => IMG_HEIGHT
         )
         port map (
-            clk            => clk,
-            reset          => reset,
+            clk   => clk,
+            reset => reset,
             img_bit_stream => img_bit_stream,
-            valid          => valid,
-            readout        => readout,
-            Trigger       => Trigger,
-            Q_1            => Q_1,
-            Q_2            => Q_2,
-            Q_3            => Q_3,
-            Q_4            => Q_4,
-            dac_dda        => dac_dda,
-            IQWRT          => IQWRT,
-            IQSEL          => IQSEL,
-            IQCLK          => IQCLK,
-            IQRESET        => IQRESET
+            valid => valid,
+            readout=> readout,
+            Trigger => Trigger,
+            Q_1 => Q_1,
+            Q_2 => Q_2,
+            Q_3 => Q_3,
+            Q_4 => Q_4,
+            dac_dda => dac_dda,
+            IQWRT=> IQWRT,
+            IQSEL => IQSEL,
+            IQCLK => IQCLK,
+            IQRESET => IQRESET
         );
 
     -- 100 MHz Clock Generator
@@ -76,10 +76,10 @@ begin
 
     -- Stimulus Process: Drives data at fixed PIXEL_RATE intervals
     stim : process
-        file     img_file : text open read_mode is "myfile.txt";
-        variable line_v   : line;
-        variable data_v   : std_logic_vector(13 downto 0);
-        variable pixel_n  : integer := 0;
+        file  img_file : text open read_mode is "myfile.txt";
+        variable line_v : line;
+        variable data_v : std_logic_vector(13 downto 0);
+        variable pixel_n : integer := 0;
     begin
         wait until reset = '1';
 
@@ -91,11 +91,11 @@ begin
             --wait until rising_edge(clk);
             wait for 20 ns;
             img_bit_stream <= data_v;
-            valid          <= '1';
+            valid  <= '1';
             
             --wait until rising_edge(clk);
             wait for 20 ns;
-            valid          <= '0';
+            valid <= '0';
 
             pixel_n := pixel_n + 1;
 
