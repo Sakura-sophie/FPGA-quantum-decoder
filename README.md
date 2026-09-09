@@ -11,7 +11,6 @@ FPGA-based image processing pipeline for real-time detection, counting, and rear
 - [Constraints](#constraints)
 - [Algorithm](#algorithm)
 - [Simulation & Testbenches](#simulation--testbenches)
-- [Building & Programming the Red Pitaya](#building--programming-the-red-pitaya)
 - [Results / Verification](#results--verification)
 - [Future Work](#future-work)
 ## Overview
