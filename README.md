@@ -69,28 +69,27 @@ image_data_latched_1. 1 cycle delay so that start read doesn't occur too early.
 5. Run synthesis, implementation, and generate the bitstream.
 6. Connect power to the board and switch on. Use ethernet to connect to pc.
 7. Wait roughly 20 s then type rp-xxxxxx.local in web address to verify communication between board and pc where xxxxxx is the boards specific address.
-8. Once web browser loads, open windows command terminal and type scp C:\path\Design_name_wrapper.bit root@rp-xxxxxx.local:/tmp/
-10. ssh root@rp-xxxxxx.local
-11. cat /tmp/Design_name_wrapper.bit > /dev/xdevcfg
-12. In a separate window, load txt file containing simulated data. Eg. my text file was saved in a folder called FPGA_quantum_decoder so ran the following one after the other:
+8. Once web browser loads, transfer .bit file to FPGA either via command terminal, scp or SD card. To do via command terminal: open windows command terminal and type scp C:\path\Design_name_wrapper.bit root@rp-xxxxxx.local:/tmp/
+9. ssh root@rp-xxxxxx.local
+10. cat /tmp/Design_name_wrapper.bit > /dev/xdevcfg
+11. In a separate window, load txt file containing simulated data. Eg. my text file was saved in a folder called FPGA_quantum_decoder so ran the following one after the other:
     -cd C:\Users\Sakura\FPGA_quantum_decoder
     -scp myfile.txt root@rp-f00ac3:~
-14. back in ssh terminal open python nano test.py
-15. paste test python code test.py and save and exit
-16. run the line python3 test.py.
-17. Connect function generator to pin X in E1 to implement trigger signal for read out and look for waveform on oscilloscope out of DAC.
-18. [Network Manager](https://redpitaya.readthedocs.io/en/latest/appsFeatures/systemtool/network_manager/networkManager.html).
+12. back in ssh terminal open python nano test.py
+13. paste test python code test.py and save and exit
+14. run the line python3 test.py.
+15. Connect function generator to pin DIO5_P in E1 to implement the trigger signal for readout and look for waveform on oscilloscope out of DAC.
+16. [Network Manager](https://redpitaya.readthedocs.io/en/latest/appsFeatures/systemtool/network_manager/networkManager.html).
 
    
 ## Constraints
  
-The `.xdc` file(s) in `constraints/` define the Red Pitaya's fixed pin mapping for:
+The `constraints.xdc` file in `constraints/` defines the Red Pitaya's fixed pin mapping for:
  
-- **ADC input pins** — connects to the onboard 14-bit ADC channels carrying camera/image signal data
 - **DAC output pins** — connects to the onboard 14-bit DAC channels driving the rearrangement control signal
-- **System clock** — the Red Pitaya's onboard clock source and PLL configuration
-- **GPIO / expansion connector pins** — if using the extension header for additional camera or trigger I/O
-Red Pitaya's official repository provides a reference `.xdc` for the STEMlab 125-14 — reuse it as the base rather than remapping pins from scratch, since the ADC/DAC/clock connections are fixed by the board layout. To find correct pin mapping, navigate to [Schematics_STEM_125-14_v1.1.pdf](https://redpitaya.readthedocs.io/en/latest/developerGuide/hardware/ORIG_GEN/125-14/top.html#top-125-14).
+- **GPIO / expansion connector pins** — Uses the extension header for the Trigger GPIO (DIO5_P in E1 connector).
+- **LED pins** - Connects signals q1 to q4 within my_FPGA to the onboard LEDs to indicate when certain stages in the FSM are complete. Useful for debugging.
+Red Pitaya's official website provides a reference for the STEMlab 125-14. To find correct pin mapping, navigate to [Schematics_STEM_125-14_v1.1.pdf](https://redpitaya.readthedocs.io/en/latest/developerGuide/hardware/ORIG_GEN/125-14/top.html#top-125-14). 
 
 ## Algorithm
  
@@ -115,14 +114,6 @@ Can simulate in Vivado by adding testbench in add sources tab or on platforms su
 3. Inspect waveforms in the Wave window and check detection thresholds trigger correctly, and DAC output matches the expected rearrangement sequence for the specific image being used.  
 tb.vhd produces a clock signal of period 10 ns and feeds simulated image data into the design from a text file synchronously with the 'valid' pulse at regular intervals (40 ns). After it has completed sreaming the data from the text file, it produces a trigger signal that enables the readout of the DAC output.
 Explicit generic and port mapping of the testbench signals to the design entity is done in the standard way within the uut (Unit under test) instantiation.
-## Building & Programming the Red Pitaya
- 
-1. Run Synthesis → Implementation → Generate Bitstream in Vivado.
-2. Transfer the bitstream to the Red Pitaya (via its web interface, SCP over the network, or SD card boot image depending on your workflow).
-3. Load the FPGA image on boot or via the Red Pitaya's runtime FPGA loading mechanism.
-4. Describe your verification step — e.g. "confirm DAC output waveform on an oscilloscope matches the expected rearrangement pulse pattern for a known test image."
-
- 
 
 
 ## Results / Verification
