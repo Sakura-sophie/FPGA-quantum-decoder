@@ -64,25 +64,22 @@ image_data_latched_1. 1 cycle delay so that start read doesn't occur too early.
 
 ## Getting Started
  
-1. Clone the repository:
-```bash
-   git clone https://github.com/<your-username>/<repo-name>.git
-   cd <repo-name>
-```
-2. If building on the Red Pitaya base project, clone/reference it separately and follow their setup instructions for generating the base block design before adding this project's custom IP.
-3. Open the project in Vivado (or recreate it from the provided `.tcl` build script, if included).
-4. Set the top-level VHDL file as the top module.
+1. Open a new project in Vivado and select the specific board type, in this case xc7z010clg400-1.
+2. Create a new design source and constraint source and copy over the files my_FPGA.vhd and constraints.xdc into them respectively. Recreate the block design.
 5. Run synthesis, implementation, and generate the bitstream.
 6. Connect power to the board and switch on. Use ethernet to connect to pc.
-7. Wait roughly 20 s then type rp-xxxxxx.local in web address to verify communication between board and pc.
+7. Wait roughly 20 s then type rp-xxxxxx.local in web address to verify communication between board and pc where xxxxxx is the boards specific address.
 8. Once web browser loads, open windows command terminal and type scp C:\path\Design_name_wrapper.bit root@rp-xxxxxx.local:/tmp/
-9. ssh root@rp-xxxxxx.local
-10. cat /tmp/Design_name_wrapper.bit > /dev/xdevcfg
-11. In a separate window, load txt file.
-12. back in ssh terminal open python nano test.py
-13. paste test python code and save and exit
-14. run python3 test.py and look for waveform on oscilloscope out of DAC.
-15. [Network Manager](https://redpitaya.readthedocs.io/en/latest/appsFeatures/systemtool/network_manager/networkManager.html).
+10. ssh root@rp-xxxxxx.local
+11. cat /tmp/Design_name_wrapper.bit > /dev/xdevcfg
+12. In a separate window, load txt file containing simulated data. Eg. my text file was saved in a folder called FPGA_quantum_decoder so ran the following one after the other:
+    -cd C:\Users\Sakura\FPGA_quantum_decoder
+    -scp myfile.txt root@rp-f00ac3:~
+14. back in ssh terminal open python nano test.py
+15. paste test python code test.py and save and exit
+16. run the line python3 test.py.
+17. Connect function generator to pin X in E1 to implement trigger signal for read out and look for waveform on oscilloscope out of DAC.
+18. [Network Manager](https://redpitaya.readthedocs.io/en/latest/appsFeatures/systemtool/network_manager/networkManager.html).
 
    
 ## Constraints
