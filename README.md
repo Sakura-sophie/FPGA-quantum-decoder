@@ -84,8 +84,8 @@ image_data_latched_1. 1 cycle delay so that start read doesn't occur too early.
     ```
 13. In a separate window, load txt file containing simulated data (my text file named myfile).
     ```bash
-    -cd C:\textfilepath
-    -scp myfile.txt root@rp-f00ac3:~
+    cd C:\textfilepath
+    scp myfile.txt root@rp-f00ac3:~
     ```
 15. back in ssh terminal open python nano test.py
 16. paste test python code `test.py` and save and exit
