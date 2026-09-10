@@ -88,7 +88,7 @@ image_data_latched_1. 1 cycle delay so that start read doesn't occur too early.
     scp myfile.txt root@rp-f00ac3:~
     ```
 15. back in ssh terminal open python via command ```nano test.py```
-16. paste test python code `test.py` and save and exit
+16. paste `test.py` in file `sim/`and save and exit
 17. Run ``` python3 test.py ```. LEDs 0-2 should light up
 18. Connect function generator to pin DIO5_P in E1 to implement the trigger signal for readout. Look for light at LED_3 and waveform on oscilloscope out of DAC.
 19. [Network Manager](https://redpitaya.readthedocs.io/en/latest/appsFeatures/systemtool/network_manager/networkManager.html).
@@ -117,7 +117,7 @@ Describe the detection and rearrangement algorithm in more detail here, e.g.:
 
 ## Simulation & Testbenches
  
-Simulation often has max timing it can simulate. Scale down the slowed clock and output_del to ~ 4 and 10 to see logic clearly in waveforms. screenshots  of how waveforms should look during simulation are given in file `\docs`.
+Simulation often has max timing it can simulate. Scale down the slowed clock and output_del to ~ 4 and 10 to see logic clearly in waveforms. screenshots  of how waveforms should look during simulation are given in file `docs/`.
  
 Can simulate in Vivado by adding testbench in add sources tab or on platforms such as EDA playground which I found easier and faster to work with. 
 
