@@ -63,57 +63,40 @@ To note: After any further edits to VHDL design, go to block design and refresh 
 
  ## Architecture
 
--**Generics** 
+- **Generics** 
 Parameterises the design so the same RTL can be re-targeted to a different experiment without re-writing logic, only re-running synthesis. Key generics include the atom array size (number of lattice sites), image dimensions in pixels, and the brightness threshold used for occupancy detection. Internal signals such as the BRAM/FIFO storage depth are derived from these generics, so changing a parameter and re-generating the bitstream automatically resizes the relevant storage without manual edits.
 
--**Ports**
+- **Ports**
 Inputs: img_bit_stream (pixel brightness), valid (pixel handshake), trigger (starts a rearrangement cycle), clk, reset.
 Outputs: DAC data bus plus the interleaved-mode control signals required by the AD9767 (see datasheet), and status flags Q1–Q4 marking completion of each FSM stage, used for readout/debug.
 
--**Slowed clock**
+- **Slowed clock**
 The onboard system clock, clk, runs at the 125 MHz, which is too fast for the main body of the rearrangement logic and running these processes on the fast internal clock could break timing requirements. A clock divider generates a 12.5 kHz derived clock which relaxes timing closure on the slower logic.
 
--**Region of Interest (ROI) processing**
+- **Region of Interest (ROI) processing**
 Rather than processing every incoming pixel, this stage restricts detection to the pixel coordinates surrounding the expected lattice sites, discarding background pixels outside those regions. Can increase regions of interest for  This reduces the data volume carried forward into detection/counting and avoids false triggers from stray light outside the trap array.
 
--**Valid-phase processing**
+- **Valid-phase processing**
 The valid handshake pulses once per pixel, but crossing between the fast pixel-input clock domain and internal processing risked the same pixel being registered twice due to timing skew. This stage gates on the valid pulse edge (rather than level) to guarantee exactly one sample is latched per pixel. A one-cycle delayed copy, image_data_latched_1, is used to align the data with the gated valid signal — this avoids the read logic starting one cycle too early, before the corresponding pixel data has settled.
 
--**BRAM read/write**
+- **BRAM read/write**
 Incoming pixel data (post-ROI, post-valid-gating) is written into on-chip BRAM at the pixel-stream rate. The main FSM then reads this data back out on the slowed 10 kHz clock for detection and counting, decoupling the fast image-capture timing from the slower downstream processing.
 
--**Main body FSM**
+- **Main body FSM**
 Sequences the pipeline through its stages — image capture, detection/counting, target generation, rearrangement calculation, and DAC output — with the Q1–Q4 flags exposing which stage is currently active or complete.
 
--**Detection & counting**
+- **Detection & counting**
 Each lattice site's stored brightness value is compared against the brightness threshold generic; above threshold = occupied, below = empty. Occupancy is stored as a bit vector (one bit per site), and the running atom count is simply the population count of this vector.
 
--**Creating targets**
+- **Creating targets**
 The occupancy grid is compared against a pre-defined target pattern (which sites should be filled) to determine which currently-empty target sites need an atom moved into them.Order of highest priority.
 
--**Rearrangement strategy**
+- **Rearrangement strategy**
 [This is the part you should fill in with your actual algorithm — row-by-row, column compaction, etc. — since "the logic used to decide which atoms move where" is specific to your implementation. Happy to help draft this once you tell me which approach you used.]
 
--**DAC output**
+- **DAC output**
 Feeds the computed move sequence into the AOD drive waveform, using the AD9767's interleaved mode (rather than dual-port mode) to output the signal needed to steer the tweezers.[DAC methods - Go to interleaved mode, not dual port](https://www.analog.com/media/en/technical-documentation/data-sheets/AD9763_9765_9767.pdf) or access data sheet via [ANALOG DEVICES AD9767](https://www.analog.com/en/products/AD9767.html)
 
-
-
-
-
- 
-- Generics, contains declaration of parameters of the specific situation. make algorithm editable for different images. Specify key parameters here such as atom array size, image size in pixels, pixel brightness count thresholds etc... Internal signals such as storage FIFOs depend on these parameters and update immediately after generate bitstream.
-- Ports. Inputs : Image bitstream, valid signal, Trigger, clock and reset. Outputs : DAC output and required interleaved mode signals, Q_1-Q_4 indicating completion of stages within FSM and readout.
-- Slowed clock. Slows clock down to 10KHz.
-- ROI process. Region of interest
-- Valid process. To overcome double counting pixel data due to timing and synchronisation.
-- BRAM read and write. Stores Data onto boards BRAM. Reads off of BRAM on slow clock.
-- main body FSM.
-- detection & counting. 
-- creating targets
--  rearrangement strategy
--  -DAC output.
- 
 - **Detection:** how a site is classified as occupied/empty from the raw image (thresholding method, filtering, calibration approach)
 - **Counting:** how the total atom count and occupancy grid are represented in hardware (e.g. bit vector, register array)
 - **Rearrangement strategy:** the logic used to decide which atoms move where to fill the target pattern (e.g. row-by-row, column compaction, or a specific published rearrangement algorithm you implemented/adapted)
