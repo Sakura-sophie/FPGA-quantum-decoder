@@ -64,20 +64,26 @@ To note: After any further edits to VHDL design, go to block design and refresh 
 
  ## Architecture
  
-Describe the detection and rearrangement algorithm in more detail here, e.g.:
+- Generics, make algorithm editable for different images. Specify key parameters here such as atom array size, image size in pixels, pixel brightness count thresholds etc... Internal signals such as storage FIFOs depend on these parameters and update immediately after generate bitstream.
+- Ports. Inputs : Image bitstream, valid signal, Trigger, clock and reset. Outputs : DAC output and required interleaved mode signals, Q_1-Q_4 indicating completion of stages within FSM and readout.
+- Slowed clock. Slows clock down to 10KHz.
+- ROI process. Region of interest
+- Valid process. To overcome double counting pixel data due to timing and synchronisation.
+- BRAM read and write. Stores Data onto boards BRAM. Reads off of BRAM on slow clock.
+- main body FSM.
+- detection & counting. 
+- creating targets
+-  rearrangement strategy
+-  -DAC output.
  
 - **Detection:** how a site is classified as occupied/empty from the raw image (thresholding method, filtering, calibration approach)
 - **Counting:** how the total atom count and occupancy grid are represented in hardware (e.g. bit vector, register array)
 - **Rearrangement strategy:** the logic used to decide which atoms move where to fill the target pattern (e.g. row-by-row, column compaction, or a specific published rearrangement algorithm you implemented/adapted)
-- **Timing:** how fast this runs end-to-end (important for atom trapping — rearrangement usually needs to happen within the atom lifetime/trap coherence window)
- 
 - **Image input interface** — how camera frame data enters the FPGA (via ADC channels directly, via PS-side capture and AXI stream into PL, GigE/CameraLink bridged through the ARM core, etc. — specify your actual interface)
 - **Atom detection block** — thresholding / peak-finding logic that identifies atom presence at each expected lattice site from the image data
 - **Counting block** — tallies detected atoms and produces the current occupancy grid
 - **Rearrangement algorithm block** — compares current occupancy to the target pattern and computes the move sequence needed to fill it
 - **DAC output stage** — converts the rearrangement move sequence into the analog control waveform(s) sent to the AOD/AOM driving the tweezer rearrangement [DAC methods - Go to interleaved mode, not dual port](https://www.analog.com/media/en/technical-documentation/data-sheets/AD9763_9765_9767.pdf) or access data sheet via [ANALOG DEVICES AD9767](https://www.analog.com/en/products/AD9767.html)
-- **PS/PL interface** — what the ARM core (Zynq PS) handles vs. what runs in FPGA fabric (PL) — e.g. PS for configuration/monitoring, PL for the real-time detection and DAC pipeline
-If there's a top-level state machine (e.g. IDLE → CAPTURE → DETECT → DECIDE → OUTPUT), a state diagram here is worth including.
 
 Valid phase, ensures read each pixel only once.
 image_data_latched_1. 1 cycle delay so that start read doesn't occur too early.
