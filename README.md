@@ -33,7 +33,7 @@ FPGA-based image processing pipeline for real-time detection, counting, and rear
 ├── sim/            # Simulation scripts (python streaming data over AXI GPIO)
 └── README.md
 ```
-## Architecture / Block Design
+## Block Design
   
 ![Block Diagram](docs/Block_design.png)
 
@@ -62,7 +62,14 @@ The Vivado block design connects five components:
 To note: After any further edits to VHDL design, go to block design and refresh module to update. 
 
 
+ ## Architecture
  
+Describe the detection and rearrangement algorithm in more detail here, e.g.:
+ 
+- **Detection:** how a site is classified as occupied/empty from the raw image (thresholding method, filtering, calibration approach)
+- **Counting:** how the total atom count and occupancy grid are represented in hardware (e.g. bit vector, register array)
+- **Rearrangement strategy:** the logic used to decide which atoms move where to fill the target pattern (e.g. row-by-row, column compaction, or a specific published rearrangement algorithm you implemented/adapted)
+- **Timing:** how fast this runs end-to-end (important for atom trapping — rearrangement usually needs to happen within the atom lifetime/trap coherence window)
  
 - **Image input interface** — how camera frame data enters the FPGA (via ADC channels directly, via PS-side capture and AXI stream into PL, GigE/CameraLink bridged through the ARM core, etc. — specify your actual interface)
 - **Atom detection block** — thresholding / peak-finding logic that identifies atom presence at each expected lattice site from the image data
@@ -119,14 +126,7 @@ The `constraints.xdc` file in `constraints/` defines the Red Pitaya's fixed pin 
 - **LED pins** - Connects signals q1 to q4 within my_FPGA to the onboard LEDs to indicate when certain stages in the FSM are complete. Useful for debugging.
 Pin assignments are taken from `Schematics_STEM_125-14_v1.1.pdf` available from Red Pitaya's official documentation (https://redpitaya.readthedocs.io/en/latest/developerGuide/hardware/ORIG_GEN/125-14/top.html#top-125-14) All GPIO pins are LVCMOS33. 
 
-## Algorithm
- 
-Describe the detection and rearrangement algorithm in more detail here, e.g.:
- 
-- **Detection:** how a site is classified as occupied/empty from the raw image (thresholding method, filtering, calibration approach)
-- **Counting:** how the total atom count and occupancy grid are represented in hardware (e.g. bit vector, register array)
-- **Rearrangement strategy:** the logic used to decide which atoms move where to fill the target pattern (e.g. row-by-row, column compaction, or a specific published rearrangement algorithm you implemented/adapted)
-- **Timing:** how fast this runs end-to-end (important for atom trapping — rearrangement usually needs to happen within the atom lifetime/trap coherence window)
+
 
 
 
