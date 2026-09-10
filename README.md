@@ -77,13 +77,13 @@ The onboard system clock, `clk`, runs at the 125 MHz, which is too fast for the 
 Rather than processing every incoming pixel, this stage restricts detection to the pixel coordinates surrounding the expected lattice sites, discarding background pixels outside those regions. The size and positioning of ROIs are variable generics. Eg `roi_size =2` creates a 2x2 region of interest surrounding each site. For real images you may want to increase this. `start_offset_x` & `start_offset_y` are important for determining the coordinates of the first pixel of the first ROI. The rest of the regions are calculated off of this starting point. This reduces the data volume carried forward into detection/counting and avoids false triggers from stray light outside the trap array.
 
 - **Valid-phase processing**
-The valid handshake pulses once per pixel, but crossing between the fast pixel-input clock domain and internal processing risked the same pixel being registered twice due to timing skew. This stage gates on the valid pulse edge (rather than level) to guarantee exactly one sample is latched per pixel. A one-cycle delayed copy, image_data_latched_1, is used to align the data with the gated valid signal — this avoids the read logic starting one cycle too early, before the corresponding pixel data has settled.
+The valid handshake pulses once per pixel, but crossing between the fast pixel-input clock domain and internal processing risked the same pixel being registered multiple times due to timing skew. This stage gates on the valid pulse edge (rather than level) to guarantee exactly one sample is latched per pixel.
 
 - **BRAM read/write**
 Incoming pixel data (post-ROI, post-valid-gating) is written into on-chip BRAM at the pixel-stream rate. The main FSM then reads this data back out on the slowed 10 kHz clock for detection and counting, decoupling the fast image-capture timing from the slower downstream processing.
 
 - **Main body FSM**
-Sequences the pipeline through its stages — image capture, detection/counting, target generation, rearrangement calculation, and DAC output — with the Q1–Q4 flags exposing which stage is currently active or complete.
+Sequences the pipeline through its stages - image capture, detection/counting, target generation, rearrangement calculation, and DAC output — with the Q1–Q4 flags exposing which stage is currently active or complete.
 
 - **Detection & counting**
 Each lattice site's stored brightness value is compared against the brightness threshold generic; above threshold = occupied, below = empty. Occupancy is stored as a bit vector (one bit per site), and the running atom count is simply the population count of this vector.
