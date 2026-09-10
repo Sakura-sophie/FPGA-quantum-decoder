@@ -44,20 +44,24 @@ The Vivado block design connects five components:
   programmable logic. The `_N` suffix means reset is active when the 
   signal is driven low - keep this consistent throughout or the design 
   will be permanently held in reset.
+  
 - **AXI GPIO** - dual-channel GPIO used to stream simulated pixel data 
   from a Python script into the FPGA over SSH:
   - Channel 1: `img_bit_stream` - 14-bit pixel brightness value
   - Channel 2: `valid` - 1-bit handshake between camera and board, pulses high once per pixel
+    
 - **my_FPGA** - the custom RTL module containing the full processing pipeline
+  
 - **AXI SmartConnect** - routes AXI read/write from the PS7's master port to the correct slave (AXI GPIO) based on the configured address map; required whenever a Zynq PS interfaces with AXI peripherals in the PL.
+  
 - **PROC_SYS_RESET** - synchronises the PS7's asynchronous FCLK_RESET0_N to the 125 MHz fabric clock domain and generates the correctly-polarised reset variants (active-high/active-low) needed by the AXI SmartConnect and AXI GPIO, preventing metastability at the reset input.
 
-Once built, go to the sources tab and right click on the block design and select create HDL wrapper. This converts the block diagrams into actual verilog code that can be understood by Vivado when implementing the design.
-To note: After any edits to design VHDL, go to block design and refresh module to update. Validate design to check no wiring or hardware errors.
-
- In the ZYNQ7 processing module, double click and Disable DDR, then make Fixed IO external (Vivado deals with this pin itself).
+ In the ZYNQ7 processing module, double click and Disable DDR, then make Fixed IO external (Vivado deals with this pin itself). Make Trigger, and all the output ports in my_FPGA external.
  
- Make Trigger, and all the output ports in my_FPGA external.
+ Once block design is complete, validate design to check no wiring or hardware errors. Then go to the sources tab and right click on the block design and select create HDL wrapper to convert the block diagram into actual verilog code that can be understood by Vivado when implementing the design.
+To note: After any further edits to VHDL design, go to block design and refresh module to update. 
+
+
  
  
 - **Image input interface** — how camera frame data enters the FPGA (via ADC channels directly, via PS-side capture and AXI stream into PL, GigE/CameraLink bridged through the ARM core, etc. — specify your actual interface)
