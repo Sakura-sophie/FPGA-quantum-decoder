@@ -47,10 +47,10 @@ The Vivado block design connects five components:
 - **AXI GPIO** - dual-channel GPIO used to stream simulated pixel data 
   from a Python script into the FPGA over SSH:
   - Channel 1: `img_bit_stream` - 14-bit pixel brightness value
-  - Channel 2: `valid` - 1-bit handshake, pulses high once per pixel
-- **my_FPGA** - the custom RTL module containing the full processing 
-  pipeline (see [Algorithm](#algorithm))
-  - ****
+  - Channel 2: `valid` - 1-bit handshake between camera and board, pulses high once per pixel
+- **my_FPGA** - the custom RTL module containing the full processing pipeline
+- **AXI SmartConnect** - routes AXI read/write from the PS7's master port to the correct slave (AXI GPIO) based on the configured address map; required whenever a Zynq PS interfaces with AXI peripherals in the PL.
+- **PROC_SYS_RESET** - synchronises the PS7's asynchronous FCLK_RESET0_N to the 125 MHz fabric clock domain and generates the correctly-polarised reset variants (active-high/active-low) needed by the AXI SmartConnect and AXI GPIO, preventing metastability at the reset input.
 
 Once built, go to the sources tab and right click on the block design and select create HDL wrapper. This converts the block diagrams into actual verilog code that can be understood by Vivado when implementing the design.
 To note: After any edits to design VHDL, go to block design and refresh module to update. Validate design to check no wiring or hardware errors.
