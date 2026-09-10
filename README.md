@@ -63,7 +63,7 @@ image_data_latched_1. 1 cycle delay so that start read doesn't occur too early.
 
 ## Getting Started
  
-1. Open a new project in Vivado create a new project targeting `xc7z010clg400-1`.
+1. Open Vivado and create a new project targeting `xc7z010clg400-1`.
 2. Add `src/my_FPGA.vhd` as a design source
 3. Add `constraints/constraints.xdc` as a constraint source
 4. Recreate the block design (see above) and generate the HDL wrapper
