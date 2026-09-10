@@ -70,20 +70,28 @@ image_data_latched_1. 1 cycle delay so that start read doesn't occur too early.
 5. Run Synthesis → Implementation → Generate Bitstream
 6. Connect power to the board and switch on. Use ethernet to connect to pc.
 7. Wait roughly 20 s then type rp-xxxxxx.local in web address to verify communication between board and pc. Replace xxxxxx with the boards specific ID printed on it.
-8. Once web browser loads, transfer .bit file to FPGA.either via command terminal, scp or SD card.
+8. Once web browser loads, transfer .bit file to FPGA.
 9. SSH is available natively on Windows (PowerShell / Command Prompt), Mac, and Linux — no additional software required.
 10. ```bash
+    # From your PC terminal, copy bitstream to the board. 
      scp C:\path\Design_name_wrapper.bit root@rp-xxxxxx.local:/tmp/
-11. ssh root@rp-xxxxxx.local
-12. cat /tmp/Design_name_wrapper.bit > /dev/xdevcfg
-13. In a separate window, load txt file containing simulated data. Eg. my text file was saved in a folder called FPGA_quantum_decoder so ran the following one after the other:
-    -cd C:\Users\Sakura\FPGA_quantum_decoder
+    
+    # SSH into the board (default password: root)
+    ssh root@rp-xxxxxx.local
+    
+    # Load the bitstream onto the FPGA
+    cat /tmp/design_wrapper.bit > /dev/xdevcfg
+    ```
+13. In a separate window, load txt file containing simulated data (my text file named myfile).
+    ```bash
+    -cd C:\textfilepath
     -scp myfile.txt root@rp-f00ac3:~
-14. back in ssh terminal open python nano test.py
-15. paste test python code test.py and save and exit
-16. run the line python3 test.py. LEDs 0-2 should light up.
-17. Connect function generator to pin DIO5_P in E1 to implement the trigger signal for readout. Look for light at LED_4 and waveform on oscilloscope out of DAC.
-18. [Network Manager](https://redpitaya.readthedocs.io/en/latest/appsFeatures/systemtool/network_manager/networkManager.html).
+    ```
+15. back in ssh terminal open python nano test.py
+16. paste test python code `test.py` and save and exit
+17. run ```bash line python3 test.py ```. LEDs 0-2 should light up.
+18. Connect function generator to pin DIO5_P in E1 to implement the trigger signal for readout. Look for light at LED_4 and waveform on oscilloscope out of DAC.
+19. [Network Manager](https://redpitaya.readthedocs.io/en/latest/appsFeatures/systemtool/network_manager/networkManager.html).
 
    
 ## Constraints
