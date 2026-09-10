@@ -87,10 +87,10 @@ image_data_latched_1. 1 cycle delay so that start read doesn't occur too early.
     cd C:\textfilepath
     scp myfile.txt root@rp-f00ac3:~
     ```
-15. back in ssh terminal open python nano test.py
+15. back in ssh terminal open python via command ```nano test.py```
 16. paste test python code `test.py` and save and exit
-17. run ``` line python3 test.py ```. LEDs 0-2 should light up.
-18. Connect function generator to pin DIO5_P in E1 to implement the trigger signal for readout. Look for light at LED_4 and waveform on oscilloscope out of DAC.
+17. Run ``` python3 test.py ```. LEDs 0-2 should light up
+18. Connect function generator to pin DIO5_P in E1 to implement the trigger signal for readout. Look for light at LED_3 and waveform on oscilloscope out of DAC.
 19. [Network Manager](https://redpitaya.readthedocs.io/en/latest/appsFeatures/systemtool/network_manager/networkManager.html).
 
    
