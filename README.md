@@ -6,10 +6,10 @@ FPGA-based image processing pipeline for real-time detection, counting, and rear
 ## Table of Contents
 - [Overview](#overview)
 - [Repository Structure](#repository-structure)
-- [Architecture / Block Design](#architecture--block-design)
+- [ Block Design](#block-design)
+- [ Architecture](#architecture)
 - [Getting Started](#getting-started)
 - [Constraints](#constraints)
-- [Algorithm](#algorithm)
 - [Simulation & Testbenches](#simulation--testbenches)
 - [Results / Verification](#results--verification)
 - [Future Work](#future-work)
