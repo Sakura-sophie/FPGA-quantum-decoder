@@ -67,14 +67,14 @@ To note: After any further edits to VHDL design, go to block design and refresh 
 Parameterises the design so the same RTL can be re-targeted to a different experiment without re-writing logic, only re-running synthesis. Key generics include the atom array size (number of lattice sites), image dimensions in pixels, and the brightness threshold used for occupancy detection. Internal signals such as the BRAM/FIFO storage depth are derived from these generics, so changing a parameter and re-generating the bitstream automatically resizes the relevant storage without manual edits.
 
 - **Ports**
-Inputs: img_bit_stream (pixel brightness), valid (pixel handshake), trigger (starts a rearrangement cycle), clk, reset.
-Outputs: DAC data bus plus the interleaved-mode control signals required by the AD9767 (see datasheet), and status flags Q1–Q4 marking completion of each FSM stage, used for readout/debug.
+Inputs: `img_bit_stream` (pixel brightness), `valid` (pixel handshake), `Trigger` (starts a rearrangement cycle), `clk`, `reset`.
+Outputs: DAC data bus plus the interleaved-mode control signals required by the AD9767 (see datasheet), and status flags `Q1`–`Q4` marking completion of each FSM stage, used for readout/debug.
 
 - **Slowed clock**
-The onboard system clock, clk, runs at the 125 MHz, which is too fast for the main body of the rearrangement logic and running these processes on the fast internal clock could break timing requirements. A clock divider generates a 12.5 kHz derived clock which relaxes timing closure on the slower logic.
+The onboard system clock, `clk`, runs at the 125 MHz, which is too fast for the main body of the rearrangement logic and running these processes on the fast internal clock could break timing requirements. A clock divider generates a 12.5 kHz derived clock which relaxes timing closure on the slower logic.
 
 - **Region of Interest (ROI) processing**
-Rather than processing every incoming pixel, this stage restricts detection to the pixel coordinates surrounding the expected lattice sites, discarding background pixels outside those regions. Can increase regions of interest for  This reduces the data volume carried forward into detection/counting and avoids false triggers from stray light outside the trap array.
+Rather than processing every incoming pixel, this stage restricts detection to the pixel coordinates surrounding the expected lattice sites, discarding background pixels outside those regions. The size and positioning of ROIs are variable generics. Eg `roi_size =2` creates a 2x2 region of interest surrounding each site. For real images you may want to increase this. `start_offset_x` & `start_offset_y` are important for determining the coordinates of the first pixel of the first ROI. The rest of the regions are calculated off of this starting point. This reduces the data volume carried forward into detection/counting and avoids false triggers from stray light outside the trap array.
 
 - **Valid-phase processing**
 The valid handshake pulses once per pixel, but crossing between the fast pixel-input clock domain and internal processing risked the same pixel being registered twice due to timing skew. This stage gates on the valid pulse edge (rather than level) to guarantee exactly one sample is latched per pixel. A one-cycle delayed copy, image_data_latched_1, is used to align the data with the gated valid signal — this avoids the read logic starting one cycle too early, before the corresponding pixel data has settled.
@@ -96,19 +96,6 @@ The occupancy grid is compared against a pre-defined target pattern (which sites
 
 - **DAC output**
 Feeds the computed move sequence into the AOD drive waveform, using the AD9767's interleaved mode (rather than dual-port mode) to output the signal needed to steer the tweezers.[DAC methods - Go to interleaved mode, not dual port](https://www.analog.com/media/en/technical-documentation/data-sheets/AD9763_9765_9767.pdf) or access data sheet via [ANALOG DEVICES AD9767](https://www.analog.com/en/products/AD9767.html)
-
-- **Detection:** how a site is classified as occupied/empty from the raw image (thresholding method, filtering, calibration approach)
-- **Counting:** how the total atom count and occupancy grid are represented in hardware (e.g. bit vector, register array)
-- **Rearrangement strategy:** the logic used to decide which atoms move where to fill the target pattern (e.g. row-by-row, column compaction, or a specific published rearrangement algorithm you implemented/adapted)
-- **Image input interface** — how camera frame data enters the FPGA (via ADC channels directly, via PS-side capture and AXI stream into PL, GigE/CameraLink bridged through the ARM core, etc. — specify your actual interface)
-- **Atom detection block** — thresholding / peak-finding logic that identifies atom presence at each expected lattice site from the image data
-- **Counting block** — tallies detected atoms and produces the current occupancy grid
-- **Rearrangement algorithm block** — compares current occupancy to the target pattern and computes the move sequence needed to fill it
-- **DAC output stage** — converts the rearrangement move sequence into the analog control waveform(s) sent to the AOD/AOM driving the tweezer rearrangement 
-
-Valid phase, ensures read each pixel only once.
-image_data_latched_1. 1 cycle delay so that start read doesn't occur too early.
-
 
 
 ## Getting Started
