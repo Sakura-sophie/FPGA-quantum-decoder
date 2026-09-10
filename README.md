@@ -39,16 +39,16 @@ FPGA-based image processing pipeline for real-time detection, counting, and rear
 
 The Vivado block design connects five components:
 
-- **Zynq7 Processing System (PS7)** — provides the 125 MHz system clock 
+- **Zynq7 Processing System (PS7)** - provides the 125 MHz system clock 
   (`FCLK_CLK0`) and active-low reset (`FCLK_RESET0_N`) to the 
   programmable logic. The `_N` suffix means reset is active when the 
-  signal is driven low — keep this consistent throughout or the design 
+  signal is driven low - keep this consistent throughout or the design 
   will be permanently held in reset.
-- **AXI GPIO** — dual-channel GPIO used to stream simulated pixel data 
+- **AXI GPIO** - dual-channel GPIO used to stream simulated pixel data 
   from a Python script into the FPGA over SSH:
-  - Channel 1: `img_bit_stream` — 16-bit pixel brightness value
-  - Channel 2: `valid` — 1-bit handshake, pulses high once per pixel
-- **my_FPGA** — the custom RTL module containing the full processing 
+  - Channel 1: `img_bit_stream` - 14-bit pixel brightness value
+  - Channel 2: `valid` - 1-bit handshake, pulses high once per pixel
+- **my_FPGA** - the custom RTL module containing the full processing 
   pipeline (see [Algorithm](#algorithm))
   - ****
 
