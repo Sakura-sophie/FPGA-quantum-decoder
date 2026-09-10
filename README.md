@@ -70,7 +70,7 @@ image_data_latched_1. 1 cycle delay so that start read doesn't occur too early.
 5. Run Synthesis → Implementation → Generate Bitstream
 6. Connect power to the board and switch on. Use ethernet to connect to pc.
 7. Wait roughly 20 s then type rp-xxxxxx.local in web address to verify communication between board and pc. Replace xxxxxx with the boards specific ID printed on it.
-8. Once web browser loads, transfer .bit file to FPGA.
+8. Once web browser loads, transfer .bit file to FPGA. This can be done via SSH over ethernet. Alternative methods can be found [here]().
 9. SSH is available natively on Windows (PowerShell / Command Prompt), Mac, and Linux — no additional software required.
 10. ```bash
     # From your PC terminal, copy bitstream to the board. 
