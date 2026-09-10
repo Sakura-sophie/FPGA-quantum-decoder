@@ -37,7 +37,20 @@ FPGA-based image processing pipeline for real-time detection, counting, and rear
   
 ![Block Diagram](docs/Block_design.png)
 
-Block designs are useful modules that are good for integrating components without requiring putting together from scratch. In this design, we have integrated the boards internal clock of 125MHz, and a reset signal. Notice the labelling reset_n, n indicates negative, meaning it performs a reset when reset is driven low ( 0 ). Important to be consistent with the design to avoid getting stuck in reset mode. The block design also includes AXI GPIO, which is how we send the simulated image signals during testing. Double click the AXI GPIO module and enable dual channel. Set both channels to output only and set the first width to 14 and second to 1. Connect the 14 width port to img_bit_stream, and the other to valid. We will drive these using python in ssh.
+The Vivado block design connects five components:
+
+- **Zynq7 Processing System (PS7)** — provides the 125 MHz system clock 
+  (`FCLK_CLK0`) and active-low reset (`FCLK_RESET0_N`) to the 
+  programmable logic. The `_N` suffix means reset is active when the 
+  signal is driven low — keep this consistent throughout or the design 
+  will be permanently held in reset.
+- **AXI GPIO** — dual-channel GPIO used to stream simulated pixel data 
+  from a Python script into the FPGA over SSH:
+  - Channel 1: `img_bit_stream` — 16-bit pixel brightness value
+  - Channel 2: `valid` — 1-bit handshake, pulses high once per pixel
+- **my_FPGA** — the custom RTL module containing the full processing 
+  pipeline (see [Algorithm](#algorithm))
+  - ****
 
 Once built, go to the sources tab and right click on the block design and select create HDL wrapper. This converts the block diagrams into actual verilog code that can be understood by Vivado when implementing the design.
 To note: After any edits to design VHDL, go to block design and refresh module to update. Validate design to check no wiring or hardware errors.
@@ -46,7 +59,6 @@ To note: After any edits to design VHDL, go to block design and refresh module t
  
  Make Trigger, and all the output ports in my_FPGA external.
  
-Describe the pipeline stages, e.g.:
  
 - **Image input interface** — how camera frame data enters the FPGA (via ADC channels directly, via PS-side capture and AXI stream into PL, GigE/CameraLink bridged through the ARM core, etc. — specify your actual interface)
 - **Atom detection block** — thresholding / peak-finding logic that identifies atom presence at each expected lattice site from the image data
@@ -121,7 +133,7 @@ Simulation often has max timing it can simulate. Scale down the slowed clock and
  
 Can simulate in Vivado by adding testbench in add sources tab or on platforms such as EDA playground which I found easier and faster to work with. 
 
-1. Add the testbench and set it as the simulation top.
+1. Add the testbench `tb.vhd` and set it as the simulation top.
 2. Run Behavioral Simulation.
 3. Inspect waveforms in the Wave window and check detection thresholds trigger correctly, and DAC output matches the expected rearrangement sequence for the specific image being used.  
 tb.vhd produces a clock signal of period 10 ns and feeds simulated image data into the design from a text file synchronously with the 'valid' pulse at regular intervals (40 ns). After it has completed sreaming the data from the text file, it produces a trigger signal that enables the readout of the DAC output.
