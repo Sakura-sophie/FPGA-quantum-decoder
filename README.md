@@ -97,10 +97,9 @@ REARRANGE scans the grid from top-left to bottom-right, looking for the first ta
 Once an empty target site is found, SEARCH_DONOR scans the whole grid for the closest atom to that site, among atoms sitting outside the target pattern. This minimises the distance each atom has to travel, reducing move time and heating/loss risk during transport.
 That atom is marked as vacated, and a move command is written into var_fifo: its coordinates, plus the (Δrow, Δcol) needed to bring it to the target site.
 The FSM loops back to REARRANGE to find the next empty target site, repeating until every target site is filled or no atoms remain to move. The finished move list is latched into fifo_storage for the execution stage.
+This approach isn't globally optimal, but it's cheap in logic/timing and works well for small, sparse grids like this 3×3 prototype.
 
-This greedy approach isn't globally optimal, but it's cheap in logic/timing and works well for small, sparse grids like this 3×3 prototype.
-
--**Move output / instruction formatting**
+- **Move output / instruction formatting**
 Each move is transmitted as four sequential 8-bit values over two Trigger pulses: donor x-coordinate, donor y-coordinate, then x-displacement, y-displacement (signed). Between values, the FSM enters a DELAY state that holds the output steady for output_del cycles and pulses readout once — this creates a clean, separated step on the output line so each instruction is individually resolvable on a scope. Currently DELAY is quite long.
 
 
