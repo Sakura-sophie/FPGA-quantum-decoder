@@ -7,7 +7,7 @@ entity my_FPGA is
         img_width : integer := 12; -- In pixels
         img_height : integer := 12;
         atom_spacing : integer := 3; -- In pixels. Calibrate and alter this parameter from experiment.
-        grid_size : integer :=3; -- 8x8
+        grid_size : integer :=3; -- 3x3
         roi_size : integer :=2; -- Region of interest in pixels surrounding atom sites. Will probs want to be greater in experiment. Eg 4x4.
         start_offset_x : integer :=2;
         start_offset_y : integer :=2; -- In pixels. Start of wherever you expect your atoms to fall in. 1st ROI.
@@ -56,7 +56,7 @@ architecture quantum_decoder of my_FPGA is
     signal target_grid : grid_dxd_type := (others => (others => '0'));
     signal target_r, target_c : integer range 0 to 7 := 0;
 
-    signal x_addr_s : signed(7 downto 0);
+    signal instr_s : signed(7 downto 0);
     type move_cmd is record
         x_co   : std_logic_vector(7 downto 0);
         y_co   : std_logic_vector(7 downto 0);
@@ -95,21 +95,7 @@ architecture quantum_decoder of my_FPGA is
 begin
 
 
-   -- clk_en_gen: process(clk, reset)
-  --  begin
-  --  if reset = '0' then
-      --  clock_count <= 0;
-      --  clk_en <= '0';
-   -- elsif rising_edge(clk) then
-      --  if clock_count = 9999 then
-        --    clock_count <= 0;
-        --    clk_en <= '1';
-     --   else
-        --    clock_count <= clock_count + 1;
-         --   clk_en <= '0';
-       -- end if;
-    --end if;
-  --  end process;
+
     slowed_clk: process(clk, reset) --slows down 100MHz down to 10 kHz.
     begin
         if reset = '0' then
@@ -256,7 +242,7 @@ begin
             fifo_count  <= 0;
             i <= 0;
             readout_s <='0';
-            x_addr_s <= (others => '0');
+            instr_s <= (others => '0');
             delay_s <= 0;
 
  	       elsif rising_edge(clock) then
@@ -414,24 +400,19 @@ begin
                             var_fifo(index).y_move_v := TO_SIGNED(target_c - best_c, 8);
                             index := index + 1;
                             STATE <= REARRANGE;
-                                   -- exit DONOR_R;
                        end if;
-                           	--end loop DONOR_C;
-                        --end loop DONOR_R;
-
 
                   when EXECUTE_MOVES =>                   
                     if Trigger='1' then
                         if i < fifo_count then
                             qs_4<='1';
-                            --readout_s <= '1';
                             case phase is
                                 when '0' =>  --send x or y coordinate depending on phase
                                     if toggle = '0' then
-                                        x_addr_s <= SIGNED(fifo_storage(i).x_co);
+                                        instr_s <= SIGNED(fifo_storage(i).x_co);
                                         toggle <= '1';
                                     else
-                                        x_addr_s <= SIGNED(fifo_storage(i).y_co);
+                                        instr_s <= SIGNED(fifo_storage(i).y_co);
                                         toggle <= '0';
                                         phase <= '1';
                                     end if;
@@ -439,10 +420,10 @@ begin
 
                                 when '1' =>  -- send move vector
                                     if toggle = '0' then
-                                        x_addr_s <= fifo_storage(i).x_move_v;
+                                        instr_s <= fifo_storage(i).x_move_v;
                                         toggle <= '1';
                                     else
-                                        x_addr_s <= fifo_storage(i).y_move_v;
+                                        instr_s <= fifo_storage(i).y_move_v;
                                         toggle <= '0';
                                         phase <= '0';
                                         i <= i + 1;
@@ -453,7 +434,7 @@ begin
                             end case;
                         else
                             readout_s <= '0';
-                            x_addr_s <= TO_SIGNED(0, 8);
+                            instr_s <= TO_SIGNED(0, 8);
                         end if;
                     end if;
 
@@ -487,7 +468,7 @@ begin
     Q_3 <= qs_3;
     Q_4 <=qs_4;
     readout <= readout_s;
-    dac_signal_14bit <= x_addr_s & "000000";
+    dac_signal_14bit <= instr_s & "000000";
 
 
 
