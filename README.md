@@ -64,7 +64,7 @@ To note: After any further edits to VHDL design, go to block design and refresh 
  ## Architecture
 
 - **Generics** 
-Parameterises the design so the same RTL can be re-targeted to a different experiment without re-writing logic, only re-running synthesis. Key generics include the atom array size (number of lattice sites), image dimensions in pixels, and the brightness threshold used for occupancy detection. Internal signals such as the BRAM/FIFO storage depth are derived from these generics, so changing a parameter and re-generating the bitstream automatically resizes the relevant storage without manual edits.
+Parameterises the design so the same RTL can be re-targeted to a different experiment without re-writing logic, only re-running synthesis. Key generics include `grid_size` which is the dimension of the atom arrays in number of atoms, image dimensions in pixels, and the brightness threshold used for occupancy detection. Internal signals such as the BRAM/FIFO storage depth are derived from these generics, so changing a parameter and re-generating the bitstream automatically resizes the relevant storage without manual edits.
 
 - **Ports**
 Inputs: `img_bit_stream` (pixel brightness), `valid` (pixel handshake), `Trigger` (starts a rearrangement cycle), `clk`, `reset`.
@@ -93,6 +93,7 @@ The occupancy grid is compared against a pre-defined target pattern (which sites
 
 - **Rearrangement strategy**
 [This is the part you should fill in with your actual algorithm — row-by-row, column compaction, etc. — since "the logic used to decide which atoms move where" is specific to your implementation. Happy to help draft this once you tell me which approach you used.]
+ X_addr is 8 bit, need to pack with 0 to make 14 bit. Add 6 0 which scale everything by a factor of 64. Produces a larger jump between instructions improving clarity.
 
 - **DAC output**
 Feeds the computed move sequence into the AOD drive waveform, using the AD9767's interleaved mode (rather than dual-port mode) to output the signal needed to steer the tweezers.[DAC methods - Go to interleaved mode, not dual port](https://www.analog.com/media/en/technical-documentation/data-sheets/AD9763_9765_9767.pdf) or access data sheet via [ANALOG DEVICES AD9767](https://www.analog.com/en/products/AD9767.html)
