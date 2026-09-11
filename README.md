@@ -86,14 +86,23 @@ Incoming pixel data is written onto the chips BRAM at the pixel-stream rate. It'
 Sequences the pipeline through its stages - image capture, detection/counting, target generation, rearrangement calculation, and DAC output — with the Q1–Q4 flags exposing which stage is currently active or complete.
 
 - **Detection & counting**
-Each lattice site's stored brightness value is compared against the brightness threshold generic; above threshold = occupied, below = empty. Occupancy is stored as a bit vector (one bit per site), and the running atom count is simply the population count of this vector.
+Within the first state, FINDING_1, each pixel inside an ROI is compared against hist_data_h and hist_data_l: above the high threshold registers an atom hit; between the two thresholds flags an ambiguous case without counting it as an atom; below the low threshold is background. Hits are OR-accumulated across all pixels in a site's ROI window (from roi_first_pixel to roi_last_pixel), so a single bright pixel anywhere in the ROI is enough to classify that site as occupied. This makes detection tolerant to the atom not falling exactly on the ROI's centre pixel. The result is stored as roi_results, a grid_size × grid_size array of bits (one per lattice site), and the total atom count (atom_counter) is incremented once per site as the frame scan completes.
 
 - **Creating targets**
-The occupancy grid is compared against a pre-defined target pattern (which sites should be filled) to determine which currently-empty target sites need an atom moved into them.Order of highest priority.
+'target_grid' is built as a priority-ordered lookup on the total atom count. The highest-count case is checked first, falling through to smaller patterns as count drops, so the achievable target scales automatically with how many atoms were actually loaded that shot. It's the same size as the atom array, initially all zeros, with 1's written in at the site locations that make up the target pattern. The example implemented here is deliberately simple and there's room to build more sophisticated target-selection algorithm.
 
 - **Rearrangement strategy**
-[This is the part you should fill in with your actual algorithm — row-by-row, column compaction, etc. — since "the logic used to decide which atoms move where" is specific to your implementation. Happy to help draft this once you tell me which approach you used.]
- X_addr is 8 bit, need to pack with 0 to make 14 bit. Add 6 0 which scale everything by a factor of 64. Produces a larger jump between instructions improving clarity.
+The algorithm is a closest-atom fill:
+REARRANGE scans the grid from top-left to bottom-right, looking for the first target site that is empty (target_grid = '1', roi_results = '0'). Raster order sets the fill priority: top-left sites are filled first.
+Once an empty target site is found, SEARCH_DONOR scans the whole grid for the closest atom to that site, among atoms sitting outside the target pattern. This minimises the distance each atom has to travel, reducing move time and heating/loss risk during transport.
+That atom is marked as vacated, and a move command is written into var_fifo: its coordinates, plus the (Δrow, Δcol) needed to bring it to the target site.
+The FSM loops back to REARRANGE to find the next empty target site, repeating until every target site is filled or no atoms remain to move. The finished move list is latched into fifo_storage for the execution stage.
+
+This greedy approach isn't globally optimal, but it's cheap in logic/timing and works well for small, sparse grids like this 3×3 prototype.
+
+-**Move output / instruction formatting**
+Each move is transmitted as four sequential 8-bit values over two Trigger pulses: donor x-coordinate, donor y-coordinate, then x-displacement, y-displacement (signed). Between values, the FSM enters a DELAY state that holds the output steady for output_del cycles and pulses readout once — this creates a clean, separated step on the output line so each instruction is individually resolvable on a scope. Currently DELAY is quite long.
+
 
 - **DAC output**
 A separate process from the main body that runs on the fast clock. Feeds the computed move sequence into the AOD drive waveform to output the signal needed to steer the optical tweezers. The 8-bit instruction value (instr_s) is left-shifted into a 14-bit DAC word by padding with six '0's (instr_s & "000000"), scaling the value by 64. This spreads the DAC's usable output range across the full 8-bit instruction space, producing larger voltage steps between adjacent instruction values on the scope/DAC output. The dac_driver process then implements the AD9767's interleaved-mode write timing: it alternates between the 2 output channels (dac_sel) using a fixed sequence (SEL_SETUP → DATA_SETUP → CLK_HI → WRT_HI → BOTH_LO → SWAP_CHAN) to meet the DAC's setup/hold requirements for IQSEL, IQCLK, and IQWRT as specified in the datasheet.[DAC methods - Go to interleaved mode, not dual port](https://www.analog.com/media/en/technical-documentation/data-sheets/AD9763_9765_9767.pdf) or access data sheet via [ANALOG DEVICES AD9767](https://www.analog.com/en/products/AD9767.html)
@@ -138,7 +147,7 @@ The `constraints.xdc` file in `constraints/` defines the Red Pitaya's fixed pin 
  
 - **DAC output pins** — connects to the onboard 14-bit DAC channels driving the rearrangement control signal
 - **GPIO / expansion connector pins** — Uses the extension header for the Trigger GPIO (DIO5_P in E1 connector).
-- **LED pins** - Connects signals q1 to q4 within my_FPGA to the onboard LEDs to indicate when certain stages in the FSM are complete. Useful for debugging.
+- **LED pins** - Connects signals Q_1 to Q_4 within my_FPGA to the onboard LEDs to indicate when certain stages in the FSM are complete. Useful for debugging.
 Pin assignments are taken from `Schematics_STEM_125-14_v1.1.pdf` available from Red Pitaya's official documentation (https://redpitaya.readthedocs.io/en/latest/developerGuide/hardware/ORIG_GEN/125-14/top.html#top-125-14) All GPIO pins are LVCMOS33. 
 
 
