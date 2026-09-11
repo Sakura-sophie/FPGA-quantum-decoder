@@ -119,7 +119,7 @@ A separate process from the main body that runs on the fast clock. Feeds the com
 8. Once web browser loads, transfer .bit file to FPGA. This can be done via SSH over ethernet. Alternative methods can be found [here]().
 9. SSH is available natively on Windows (PowerShell / Command Prompt), Mac, and Linux — no additional software required.
 10. ```bash
-    # From your PC terminal, copy bitstream to the board. 
+    # From PC terminal, copy bitstream to the board. 
      scp C:\path\Design_name_wrapper.bit root@rp-xxxxxx.local:/tmp/
     
     # SSH into the board (default password: root)
