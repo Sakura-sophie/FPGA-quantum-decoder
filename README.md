@@ -39,15 +39,15 @@ FPGA-based image processing pipeline for real-time detection, counting, and rear
 The Vivado block design connects five components:
 
 - **Zynq7 Processing System (PS7)** - provides the 125 MHz system clock 
-  (`FCLK_CLK0`) and active-low reset (`FCLK_RESET0_N`) to the 
-  programmable logic. The `_N` suffix means reset is active when the 
+  ('FCLK_CLK0') and active-low reset ('FCLK_RESET0_N') to the 
+  programmable logic. The '_N' suffix means reset is active when the 
   signal is driven low - keep this consistent throughout or the design 
   will be permanently held in reset.
   
 - **AXI GPIO** - dual-channel GPIO used to stream simulated pixel data 
   from a Python script into the FPGA over SSH:
-  - Channel 1: `img_bit_stream` - 14-bit pixel brightness value
-  - Channel 2: `valid` - 1-bit handshake between camera and board, pulses high once per pixel
+  - Channel 1: 'img_bit_stream' - 14-bit pixel brightness value
+  - Channel 2: 'valid' - 1-bit handshake between camera and board, pulses high once per pixel
     
 - **my_FPGA** - the custom RTL module containing the full processing pipeline
   
@@ -67,11 +67,11 @@ To note: After any further edits to VHDL design, go to block design and refresh 
 Parameterises the design so the same RTL can be re-targeted to a different experiment without re-writing logic, only re-running synthesis. Key generics include `grid_size` which is the dimension of the atom arrays in number of atoms, image dimensions in pixels, and the brightness threshold used for occupancy detection. Internal signals such as the BRAM/FIFO storage depth are derived from these generics, so changing a parameter and re-generating the bitstream automatically resizes the relevant storage without manual edits.
 
 - **Ports**
-Inputs: `img_bit_stream` (pixel brightness), `valid` (pixel handshake), `Trigger` (starts a rearrangement cycle), `clk`, `reset`.
-Outputs: DAC data bus plus the interleaved-mode control signals required by the AD9767 (see datasheet), and status flags `Q1`–`Q4` marking completion of each FSM stage, used for readout/debug.
+Inputs: 'img_bit_stream' (pixel brightness), 'valid' (pixel handshake), 'Trigger' (starts a rearrangement cycle), 'clk', 'reset'.
+Outputs: DAC data bus plus the interleaved-mode control signals required by the AD9767 (see datasheet), and status flags 'Q1'–'Q4' marking completion of each FSM stage, used for readout/debug.
 
 - **Slowed clock**
-The onboard system clock, `clk`, runs at the 125 MHz, which is too fast for the main body of the rearrangement logic and running these processes on the fast internal clock could break timing requirements. A clock divider generates a 12.5 kHz derived clock which relaxes timing closure on the slower logic.
+The onboard system clock, 'clk', runs at the 125 MHz, which is too fast for the main body of the rearrangement logic and running these processes on the fast internal clock could break timing requirements. A clock divider generates a 12.5 kHz derived clock which relaxes timing closure on the slower logic.
 
 - **Region of Interest (ROI) processing**
 Rather than processing every incoming pixel, this stage restricts detection to the pixel coordinates surrounding the expected lattice sites, discarding background pixels outside those regions. The size and positioning of ROIs are variable generics. Eg 'roi_size =2' creates a 2x2 region of interest surrounding each site. For real images you may want to increase this. 'start_offset_x' & 'start_offset_y' are important for determining the coordinates of the first pixel of the first ROI. The rest of the regions are calculated off of this starting point. This reduces the data volume carried forward into detection/counting and avoids false triggers from stray light outside the trap array.
@@ -83,7 +83,7 @@ The valid handshake pulses once per pixel, but the camera's valid signal is asyn
 Incoming pixel data is written onto the chips BRAM at the pixel-stream rate. It's read back out on the slowed 12.5 kHz clock, with a 1-cycle delayed signal, 'img_data_latched_1', used so each pixel lines up correctly with its ROI classification rather than the next pixel's.
 
 - **Main body FSM**
-Sequences the pipeline through its stages - image capture, detection/counting, target generation, rearrangement calculation, and DAC output — with the Q1–Q4 flags exposing which stage is currently active or complete.
+Sequences the pipeline through its stages - image capture, detection/counting, target generation, rearrangement calculation, and DAC output — with the 'Q1'–'Q4' flags exposing which stage is currently active or complete.
 
 - **Detection & counting**
 Within the first state, FINDING_1, each pixel inside an ROI is compared against hist_data_h and hist_data_l: above the high threshold registers an atom hit; between the two thresholds flags an ambiguous case without counting it as an atom; below the low threshold is background. Hits are OR-accumulated across all pixels in a site's ROI window (from roi_first_pixel to roi_last_pixel), so a single bright pixel anywhere in the ROI is enough to classify that site as occupied. This makes detection tolerant to the atom not falling exactly on the ROI's centre pixel. The result is stored as roi_results, a grid_size × grid_size array of bits (one per lattice site), and the total atom count (atom_counter) is incremented once per site as the frame scan completes.
@@ -96,22 +96,22 @@ The algorithm is a closest-atom fill:
 REARRANGE scans the grid from top-left to bottom-right, looking for the first target site that is empty (target_grid = '1', roi_results = '0'). Raster order sets the fill priority: top-left sites are filled first.
 Once an empty target site is found, SEARCH_DONOR scans the whole grid for the closest atom to that site, among atoms sitting outside the target pattern. This minimises the distance each atom has to travel, reducing move time and heating/loss risk during transport.
 That atom is marked as vacated, and a move command is written into var_fifo: its coordinates, plus the (Δrow, Δcol) needed to bring it to the target site.
-The FSM loops back to REARRANGE to find the next empty target site, repeating until every target site is filled or no atoms remain to move. The finished move list is latched into fifo_storage for the execution stage.
+The FSM loops back to REARRANGE to find the next empty target site, repeating until every target site is filled or no atoms remain to move. The finished move list is latched into 'fifo_storage' for the execution stage.
 This approach isn't globally optimal, but it's cheap in logic/timing and works well for small, sparse grids like this 3×3 prototype.
 
 - **Move output / instruction formatting**
-Each move is transmitted as four sequential 8-bit values over two Trigger pulses: donor x-coordinate, donor y-coordinate, then x-displacement, y-displacement (signed). Between values, the FSM enters a DELAY state that holds the output steady for output_del cycles and pulses readout once. This creates a clean, separated step on the output line so each instruction is individually resolvable on a scope. Currently DELAY is quite long.
+Each move is transmitted as four sequential 8-bit values over two Trigger pulses: donor x-coordinate, donor y-coordinate, then x-displacement, y-displacement (signed). Between values, the FSM enters a DELAY state that holds the output steady for 'output_del' cycles and pulses readout once. This creates a clean, separated step on the output line so each instruction is individually resolvable on a scope. Currently DELAY is quite long.
 
 
 - **DAC output**
-A separate process from the main body that runs on the fast clock. Feeds the computed move sequence into the AOD drive waveform to output the signal needed to steer the optical tweezers. The 8-bit instruction value (instr_s) is left-shifted into a 14-bit DAC word by padding with six '0's (instr_s & "000000"), scaling the value by 64. This spreads the DAC's usable output range across the full 8-bit instruction space, producing larger voltage steps between adjacent instruction values on the scope/DAC output. The dac_driver process then implements the AD9767's interleaved-mode write timing: it alternates between the 2 output channels (dac_sel) using a fixed sequence (SEL_SETUP → DATA_SETUP → CLK_HI → WRT_HI → BOTH_LO → SWAP_CHAN) to meet the DAC's setup/hold requirements for IQSEL, IQCLK, and IQWRT as specified in the datasheet.[DAC methods - Go to interleaved mode, not dual port](https://www.analog.com/media/en/technical-documentation/data-sheets/AD9763_9765_9767.pdf) or access data sheet via [ANALOG DEVICES AD9767](https://www.analog.com/en/products/AD9767.html)
+A separate process from the main body that runs on the fast clock. Feeds the computed move sequence into the AOD drive waveform to output the signal needed to steer the optical tweezers. The 8-bit instruction value ('instr_s') is left-shifted into a 14-bit DAC word by padding with six '0's (instr_s & "000000"), scaling the value by 64. This spreads the DAC's usable output range across the full 8-bit instruction space, producing larger voltage steps between adjacent instruction values on the scope/DAC output. The dac_driver process then implements the AD9767's interleaved-mode write timing: it alternates between the 2 output channels (dac_sel) using a fixed sequence (SEL_SETUP → DATA_SETUP → CLK_HI → WRT_HI → BOTH_LO → SWAP_CHAN) to meet the DAC's setup/hold requirements for IQSEL, IQCLK, and IQWRT as specified in the datasheet.[DAC methods - Go to interleaved mode, not dual port](https://www.analog.com/media/en/technical-documentation/data-sheets/AD9763_9765_9767.pdf) or access data sheet via [ANALOG DEVICES AD9767](https://www.analog.com/en/products/AD9767.html)
 
 
 ## Getting Started
  
-1. Open Vivado and create a new project targeting `xc7z010clg400-1`.
-2. Add `src/my_FPGA.vhd` as a design source
-3. Add `constraints/constraints.xdc` as a constraint source
+1. Open Vivado and create a new project targeting xc7z010clg400-1.
+2. Add src/my_FPGA.vhd as a design source
+3. Add constraints/constraints.xdc as a constraint source
 4. Recreate the block design (see above) and generate the HDL wrapper
 5. Run Synthesis → Implementation → Generate Bitstream
 6. Connect power to the board and switch on. Use ethernet to connect to pc.
