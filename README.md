@@ -134,7 +134,7 @@ A separate process from the main body that runs on the fast clock. Feeds the com
     scp myfile.txt root@rp-f00ac3:~
     ```
 15. back in ssh terminal open python via command ```nano test.py```
-16. paste `test.py` in file `sim/`and save and exit
+16. paste test.py from file sim/ and save and exit
 17. Run ``` python3 test.py ```. LEDs 0-2 should light up
 18. Connect function generator to pin DIO5_P in E1 to implement the trigger signal for readout. Look for light at LED_3 and waveform on oscilloscope out of DAC.
 Additional : If difficulty connecting pc to board, go to [Network Manager](https://redpitaya.readthedocs.io/en/latest/appsFeatures/systemtool/network_manager/networkManager.html).
@@ -142,12 +142,12 @@ Additional : If difficulty connecting pc to board, go to [Network Manager](https
    
 ## Constraints
  
-The `constraints.xdc` file in `constraints/` defines the Red Pitaya's fixed pin mapping for:
+The constraints.xdc file in constraints/ defines the Red Pitaya's fixed pin mapping for:
  
 - **DAC output pins** — connects to the onboard 14-bit DAC channels driving the rearrangement control signal
 - **GPIO / expansion connector pins** — Uses the extension header for the Trigger GPIO (DIO5_P in E1 connector).
 - **LED pins** - Connects signals Q_1 to Q_4 within my_FPGA to the onboard LEDs to indicate when certain stages in the FSM are complete. Useful for debugging.
-Pin assignments are taken from `Schematics_STEM_125-14_v1.1.pdf` available from Red Pitaya's official documentation (https://redpitaya.readthedocs.io/en/latest/developerGuide/hardware/ORIG_GEN/125-14/top.html#top-125-14) All GPIO pins are LVCMOS33. 
+Pin assignments are taken from Schematics_STEM_125-14_v1.1.pdf available from Red Pitaya's official documentation (https://redpitaya.readthedocs.io/en/latest/developerGuide/hardware/ORIG_GEN/125-14/top.html#top-125-14) All GPIO pins are LVCMOS33. 
 
 
 
@@ -156,11 +156,11 @@ Pin assignments are taken from `Schematics_STEM_125-14_v1.1.pdf` available from 
 
 ## Simulation & Testbenches
  
-Simulation often has max timing it can simulate. Scale down the slowed clock and output_del to ~ 4 and 10 to see logic clearly in waveforms. screenshots  of how waveforms should look during simulation are given in file `docs/`.
+Simulation often has max timing it can simulate. Scale down the slowed clock and output_del to ~ 4 and 10 to see logic clearly in waveforms. screenshots  of how waveforms should look during simulation are given in file docs/.
  
 Can simulate in Vivado by adding testbench in add sources tab or on platforms such as EDA playground which I found easier and faster to work with. 
 
-1. Add the testbench `tb.vhd` and set it as the simulation top.
+1. Add the testbench tb.vhd and set it as the simulation top.
 2. Run Behavioral Simulation.
 3. Inspect waveforms in the Wave window and check detection thresholds trigger correctly, and DAC output matches the expected rearrangement sequence for the specific image being used.  
 tb.vhd produces a clock signal of period 10 ns and feeds simulated image data into the design from a text file synchronously with the 'valid' pulse at regular intervals (40 ns). After it has completed sreaming the data from the text file, it produces a trigger signal that enables the readout of the DAC output.
