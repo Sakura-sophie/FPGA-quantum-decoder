@@ -68,7 +68,7 @@ Parameterises the design so the same RTL can be re-targeted to a different exper
 
 - **Ports**
 Inputs: 'img_bit_stream' (pixel brightness), 'valid' (pixel handshake), 'Trigger' (starts a rearrangement cycle), 'clk', 'reset'.
-Outputs: DAC data bus plus the interleaved-mode control signals required by the AD9767 (see datasheet), and status flags 'Q1'–'Q4' marking completion of each FSM stage, used for readout/debug.
+Outputs: DAC data bus plus the interleaved-mode control signals required by the AD9767 ([see datasheet](https://www.analog.com/en/products/AD9767.html)), and status flags 'Q1'–'Q4' marking completion of each FSM stage, used for readout/debug.
 
 - **Slowed clock**
 The onboard system clock, 'clk', runs at the 125 MHz, which is too fast for the main body of the rearrangement logic and running these processes on the fast internal clock could break timing requirements. A clock divider generates a 12.5 kHz derived clock which relaxes timing closure on the slower logic.
