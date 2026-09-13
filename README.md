@@ -55,10 +55,10 @@ The Vivado block design connects five components:
   
 - **PROC_SYS_RESET** - synchronises the PS7's asynchronous FCLK_RESET0_N to the 125 MHz fabric clock domain and generates the correctly-polarised reset variants (active-high/active-low) needed by the AXI SmartConnect and AXI GPIO, preventing metastability at the reset input.
 
- In the ZYNQ7 processing module, double click and Disable DDR, then make Fixed IO external (Vivado deals with this pin itself). Make Trigger, and all the output ports in my_FPGA external.
+ In the ZYNQ7 processing module, double click and Disable DDR, exit, then double click the 'fixed IO' pin and select 'make external' (Vivado deals with this pin itself). Make Trigger, and all the output ports in my_FPGA external.
  
- Once block design is complete, validate design to check no wiring or hardware errors. Then go to the sources tab and right click on the block design and select create HDL wrapper to convert the block diagram into actual verilog code that can be understood by Vivado when implementing the design.
-To note: After any further edits to VHDL design, go to block design and refresh module to update. 
+ Once block design is complete, validate design to check no wiring or hardware errors. Then go to the sources tab and right click on the block design and select 'create HDL wrapper' to convert the block diagram into actual verilog code that can be understood by Vivado when implementing the design.
+To note: After any further edits to .vhd design, go to block design and refresh module to update. 
 
 
  ## Architecture
