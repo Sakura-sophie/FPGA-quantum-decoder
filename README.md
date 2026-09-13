@@ -144,8 +144,8 @@ Additional : If difficulty connecting pc to board, go to [Network Manager](https
  
 The constraints.xdc file in constraints/ defines the Red Pitaya's fixed pin mapping for:
  
-- **DAC output pins** — connects to the onboard 14-bit DAC channels driving the rearrangement control signal
-- **GPIO / expansion connector pins** — Uses the extension header for the Trigger GPIO (DIO5_P in E1 connector).
+- **DAC output pins** - connects to the onboard 14-bit DAC channels driving the rearrangement control signal.
+- **GPIO / expansion connector pins** - Uses the extension header for the Trigger GPIO (DIO5_P in E1 connector).
 - **LED pins** - Connects signals Q_1 to Q_4 within my_FPGA to the onboard LEDs to indicate when certain stages in the FSM are complete. Useful for debugging.
 Pin assignments are taken from Schematics_STEM_125-14_v1.1.pdf available from Red Pitaya's official documentation (https://redpitaya.readthedocs.io/en/latest/developerGuide/hardware/ORIG_GEN/125-14/top.html#top-125-14) All GPIO pins are LVCMOS33. 
 
