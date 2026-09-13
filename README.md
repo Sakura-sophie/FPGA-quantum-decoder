@@ -117,7 +117,7 @@ A separate process from the main body that runs on the fast clock. Feeds the com
 6. Connect power to the board and switch on. Use ethernet to connect to pc.
 7. Wait roughly 20 s then type rp-xxxxxx.local in web address to verify communication between board and pc. Replace xxxxxx with the boards specific ID printed on it.
 8. Once web browser loads, transfer .bit file to FPGA. This can be done via SSH over ethernet. Alternative methods can be found [here]().
-9. SSH is available natively on Windows (PowerShell / Command Prompt), Mac, and Linux — no additional software required.
+9. SSH is available natively on Windows (PowerShell / Command Prompt), Mac, and Linux, no additional software required.
 10. ```bash
     # From PC terminal, copy bitstream to the board. 
      scp C:\path\Design_name_wrapper.bit root@rp-xxxxxx.local:/tmp/
