@@ -67,7 +67,7 @@ To note: After any further edits to .vhd design, go to block design and refresh 
 Parameterises the design so the same RTL can be re-targeted to a different experiment without re-writing logic, only re-running synthesis. Key generics include 'grid_size' which is the dimension of the atom arrays in number of atoms, image dimensions in pixels, and the brightness thresholds used for occupancy detection. Internal signals such as the BRAM/FIFO storage depth are derived from these generics, so changing a parameter and re-generating the bitstream automatically resizes the relevant storage without manual edits.
 
 - **Ports**
-Inputs: 'img_bit_stream' (pixel brightness), 'valid' (pixel handshake), 'Trigger' (starts a rearrangement cycle), 'clk', 'reset'.
+Inputs: 'img_bit_stream' (pixel brightness), '''valid''' (pixel handshake), 'Trigger' (starts a rearrangement cycle), 'clk', 'reset'.
 Outputs: DAC data bus plus the interleaved-mode control signals required by the AD9767 ([see datasheet](https://www.analog.com/en/products/AD9767.html)), and status flags 'Q1'–'Q4' marking completion of each FSM stage, used for readout/debug.
 
 - **Slowed clock**
