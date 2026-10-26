@@ -1,0 +1,62 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import math
+height,width= 12, 12   # 512,512 Here define img width and height in terms of pixels. usually 1200x960 size. Here taken a small zoomed in site to create less work for fpga.
+spacing= 3 #100 #55
+start_x, start_y = 2, 2 #106, 106 #63.5, 63.5, 63, 63
+d= 3 # 4x4, 8x8 etc...
+qubit_grid = np.random.randint(0, 2, size=(d, d)) < 0.5
+print("\nRandom integer 4x4 array:\n", qubit_grid)
+------------------------------------------------------------------------------------
+pixel_size=2
+#background=np.zeros(size=(2560,2160)) # Dimensions of the Andor Zyla5.5
+background_gaussian = np.random.normal(loc=60, scale=5, size=(height,width))
+background_gaussian=np.round(background_gaussian.astype(int))
+
+index=[]
+coordinates=[]
+for i in range(d):
+    for j in range(d):
+        if qubit_grid[i,j]==1:
+            #index.append((a,b))
+            coordinates.append((start_x+spacing*i,start_y+spacing*j))
+print("1's coordinates:",coordinates)
+------------------------------------------------------------------------------------------
+lam= 100
+no_events=np.size(coordinates)
+np.random.seed(42)
+Poisson_1s = np.random.poisson(lam,no_events)
+
+def add_gaussian(image, cx, cy, brightness, std=2):
+    for y in range(image.shape[0]):
+        for x in range(image.shape[1]):
+            dist2 = (x-cx)**2 + (y-cy)**2
+            image[y,x] += brightness * np.exp(-dist2 / (2*std**2))
+
+for idx, (cx, cy) in enumerate(coordinates):
+    total_photons = Poisson_1s[idx]
+    background_gaussian[cx,cy] += total_photons
+    #add_gaussian(background_gaussian, cx, cy, brightness=total_photons, std=2)
+
+
+print("Photon counts:",Poisson_1s)
+-----------------------------------------------------------------------------------------------
+
+bins_p = np.arange(np.min(Poisson_1s)-1 , np.max(Poisson_1s)+1, 1)
+bins = np.arange(35, 85, 1)
+fig, axs = plt.subplots(1, 2)
+fig.set_size_inches(12,6)
+count_1, bins_1, _ = axs[0].hist(Poisson_1s.ravel(),bins=bins_p,density=True, alpha=0.6, color="green", edgecolor='black')
+pmf_p = [(lam**round(k) * np.exp(-lam)) / math.factorial(round(k)) for k in bins_p]
+#pmf_p = poisson.pmf(bins_p, mu=100)
+count_2, bins_2, _ = axs[0].hist(background_gaussian.ravel(), bins=bins, density=True, alpha=0.6, color='skyblue', edgecolor='black')
+pdf_g = (1 / (5 * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((bins - 60) / 5) ** 2)
+axs[0].plot(bins,pdf_g,'-',linewidth=2)
+axs[0].plot(bins_p, pmf_p, '-', color='darkgreen', linewidth=2)
+axs[0].set_title("Gaussian distribution of background noise")                                                                    
+print("background tails end at",bins[0],"and",bins[-1])
+print("1's tails end at",np.min(Poisson_1s),"and",np.max(Poisson_1s))
+im=axs[1].imshow(background_gaussian, cmap='gray')
+plt.title("Simulated atom array")
+fig.colorbar(im, ax=axs[1])
+plt.show()
