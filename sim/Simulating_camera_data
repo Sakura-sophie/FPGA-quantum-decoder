@@ -60,3 +60,9 @@ im=axs[1].imshow(background_gaussian, cmap='gray')
 plt.title("Simulated atom array")
 fig.colorbar(im, ax=axs[1])
 plt.show()
+----------------------------------------------------------------------------------------------
+import numpy as np
+image_data = np.clip(background_gaussian, 0, 65535).astype(np.uint16)
+with open("myfile.txt", "w") as file:
+    for val in image_data.ravel():
+        file.write(format(val, '014b')+ '\n')
